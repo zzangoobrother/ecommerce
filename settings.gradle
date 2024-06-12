@@ -10,5 +10,7 @@ rootProject.name = 'ecommerce'
 include(
         "domain",
         "ecommerce-api",
-        "storage:mysql"
+        "member-api",
+        "storage:mysql",
+        "gateway"
 )
