@@ -4,4 +4,4 @@ server:
 route:
   member-api:
     v1:
-      base-url: http://localhost:8083
+      base-url: http://localhost:8080
