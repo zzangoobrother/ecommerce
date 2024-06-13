@@ -7,5 +7,5 @@ tasks.getByName("jar") {
 }
 
 dependencies {
-
+    compileOnly("org.springframework:spring-context")
 }

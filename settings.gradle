@@ -11,6 +11,6 @@ include(
         "domain",
         "ecommerce-api",
         "member-api",
-        "storage:mysql",
+        "storage:db",
         "gateway"
 )
