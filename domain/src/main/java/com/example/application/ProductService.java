@@ -32,4 +32,9 @@ public class ProductService {
                 .map(ProductDomainResponse::toProductDomainResponse)
                 .toList();
     }
+
+    public ProductDomainResponse getBy(Long productId) {
+        Product product = productRepository.getBy(productId);
+        return ProductDomainResponse.toProductDomainResponse(product);
+    }
 }
