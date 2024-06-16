@@ -13,7 +13,20 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
-    public Long register(String name) {
-        return memberRepository.save(Member.builder().name(name).build()).getId();
+    public Long register(String loginId, String password, String name) {
+        return memberRepository.save(
+                Member.builder()
+                        .loginId(loginId)
+                        .password(password)
+                        .name(name)
+                        .build()
+        ).getId();
+    }
+
+    public void login(String loginId, String password) {
+        Member member = memberRepository.getBy(loginId);
+        if (!password.equals(member.getPassword())) {
+            throw new IllegalArgumentException("아이디/비밀번호를 다시 입력해 주세요.");
+        }
     }
 }
