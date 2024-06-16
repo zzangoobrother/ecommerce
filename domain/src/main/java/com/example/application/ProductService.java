@@ -1,10 +1,12 @@
 package com.example.application;
 
+import com.example.application.dto.ProductDomainResponse;
 import com.example.model.Product;
 import com.example.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class ProductService {
@@ -23,5 +25,11 @@ public class ProductService {
                 .build();
         Product saveProduct = productRepository.save(product);
         return saveProduct.getId();
+    }
+
+    public List<ProductDomainResponse> getAll() {
+        return productRepository.getAll().stream()
+                .map(ProductDomainResponse::toProductDomainResponse)
+                .toList();
     }
 }
