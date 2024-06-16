@@ -12,5 +12,6 @@ include(
         "ecommerce-api",
         "member-api",
         "storage:db",
+        "storage:redis",
         "gateway"
 )

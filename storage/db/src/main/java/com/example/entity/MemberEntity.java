@@ -18,16 +18,26 @@ public class MemberEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "login_id", nullable = false)
+    private String loginId;
+
+    @Column(name = "password", nullable = false)
+    private String password;
+
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
     @Builder
-    public MemberEntity(String name) {
+    public MemberEntity(String loginId, String password, String name) {
+        this.loginId = loginId;
+        this.password = password;
         this.name = name;
     }
 
     public Member toMember() {
         return Member.builder()
+                .loginId(getLoginId())
+                .password(getPassword())
                 .name(getName())
                 .build();
     }

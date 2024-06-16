@@ -8,6 +8,7 @@ tasks.getByName("jar") {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(project(':storage:redis'))
 
     runtimeOnly(project(':storage:db'))
 
