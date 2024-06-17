@@ -10,26 +10,5 @@ route:
     v1:
       base-url: http://localhost:8081
 
-spring:
-  cloud:
-    gateway:
-      default-filters:
-        - name : AuthFilter
-
-      routes:
-        - id: member-api
-          uri: http://localhost:8080
-          predicates:
-            - Path=/api/v1/members/**
-          filters:
-            - RewritePath=/api/v1/(?<servicePath>.*), /${servicePath}
-
-        - id: ecommerce-api
-          uri: http://localhost:8081
-          predicates:
-            - Path=/api/v1/**
-          filters:
-            - RewritePath=/api/v1/(?<servicePath>.*), /${servicePath}
-
 exclude:
   uri: /api/v1/members/signup, /api/v1/members/login
