@@ -6,6 +6,7 @@ import com.example.controller.dto.request.RegisterMemberRequest;
 import com.example.repository.RedisRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,12 +25,12 @@ public class MemberController {
     }
 
     @PostMapping("/signup")
-    public Long register(@RequestBody RegisterMemberRequest request) {
+    public Long register(@Valid @RequestBody RegisterMemberRequest request) {
         return memberService.register(request.loginId(), request.password(), request.name());
     }
 
     @PostMapping("/login")
-    public void login(@RequestBody LoginMemberRequest loginMemberRequest, HttpServletRequest request) {
+    public void login(@Valid @RequestBody LoginMemberRequest loginMemberRequest, HttpServletRequest request) {
         String loginId = loginMemberRequest.loginId();
         memberService.login(loginId, loginMemberRequest.password());
 
