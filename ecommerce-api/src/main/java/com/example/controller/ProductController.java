@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.application.ProductService;
 import com.example.controller.dto.request.CreateProductRequest;
 import com.example.controller.dto.response.ProductResponse;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public Long create(@RequestBody CreateProductRequest request) {
+    public Long create(@Valid @RequestBody CreateProductRequest request) {
         return productService.create(request.name(), request.price(), request.quantity());
     }
 
