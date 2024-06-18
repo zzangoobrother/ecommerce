@@ -31,7 +31,7 @@ public class ProductEntityRepository implements ProductRepository {
     @Override
     public Product getBy(Long productId) {
         return repository.findById(productId).orElseThrow(
-                () -> new EntityNotFoundException("해당 상품을 찾을 수 없습니다.")
+                () -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다.")
         ).toProduct();
     }
 }

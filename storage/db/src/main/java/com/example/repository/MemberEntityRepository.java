@@ -2,7 +2,6 @@ package com.example.repository;
 
 import com.example.entity.MemberEntity;
 import com.example.model.Member;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -28,7 +27,7 @@ class MemberEntityRepository implements MemberRepository {
     @Override
     public Member getBy(String loginId) {
         return repository.findByLoginId(loginId).orElseThrow(
-                () -> new EntityNotFoundException("해당 아이디를 찾을 수 없습니다.")
+                () -> new IllegalArgumentException("해당 아이디를 찾을 수 없습니다.")
         ).toMember();
     }
 }
