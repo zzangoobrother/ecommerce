@@ -10,4 +10,6 @@ public interface ProductRepository {
     List<Product> getAll();
 
     Product getBy(Long productId);
+
+    boolean existsBy(String name);
 }
