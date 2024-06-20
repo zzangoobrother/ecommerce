@@ -14,6 +14,10 @@ public class MemberService {
     }
 
     public Long register(String loginId, String password, String name) {
+        if (memberRepository.existsBy(loginId)) {
+            throw new IllegalArgumentException("중복된 아이디가 존재합니다.");
+        }
+
         return memberRepository.save(
                 Member.builder()
                         .loginId(loginId)

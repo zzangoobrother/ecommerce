@@ -30,4 +30,9 @@ class MemberEntityRepository implements MemberRepository {
                 () -> new IllegalArgumentException("해당 아이디를 찾을 수 없습니다.")
         ).toMember();
     }
+
+    @Override
+    public boolean existsBy(String loginId) {
+        return repository.existsByLoginId(loginId);
+    }
 }

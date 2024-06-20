@@ -6,6 +6,7 @@ import com.example.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -18,6 +19,10 @@ public class ProductService {
     }
 
     public Long create(String name, BigDecimal price, int quantity) {
+        if (!productRepository.existsBy(name)) {
+            throw new IllegalArgumentException("중복된 상품명을 가질 수 없습니다.");
+        }
+
         Product product = Product.builder()
                 .name(name)
                 .price(price)

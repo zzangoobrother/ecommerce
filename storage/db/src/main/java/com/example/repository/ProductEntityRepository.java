@@ -2,13 +2,12 @@ package com.example.repository;
 
 import com.example.entity.ProductEntity;
 import com.example.model.Product;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public class ProductEntityRepository implements ProductRepository {
+class ProductEntityRepository implements ProductRepository {
 
     private final ProductJpaRepository repository;
 
@@ -33,5 +32,10 @@ public class ProductEntityRepository implements ProductRepository {
         return repository.findById(productId).orElseThrow(
                 () -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다.")
         ).toProduct();
+    }
+
+    @Override
+    public boolean existsBy(String name) {
+        return repository.existsByName(name);
     }
 }
