@@ -21,9 +21,7 @@ import java.util.Base64;
 public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> {
     private static final String SESSION_KEY = "JSESSIONID";
     private static final String REDIS_SESSION_KEY = ":sessions:";
-
-    @Value("${spring.session.redis.namespace}")
-    private String namespace;
+    private String namespace = "spring:session";
     
     private final ExcludeProperties excludeProperties;
     private final RedisRepository redisRepository;

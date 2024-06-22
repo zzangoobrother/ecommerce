@@ -30,7 +30,8 @@ public class ProductEntity {
     private int quantity;
 
     @Builder
-    public ProductEntity(String name, BigDecimal price, int quantity) {
+    public ProductEntity(Long id, String name, BigDecimal price, int quantity) {
+        this.id = id;
         this.name = name;
         this.price = price;
         this.quantity = quantity;
@@ -38,6 +39,7 @@ public class ProductEntity {
 
     public static ProductEntity toProductEntity(Product product) {
         return ProductEntity.builder()
+                .id(product.getId())
                 .name(product.getName())
                 .price(product.getPrice())
                 .quantity(product.getQuantity())

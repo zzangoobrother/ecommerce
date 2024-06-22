@@ -3,7 +3,6 @@ package com.example.controller;
 import com.example.application.MemberService;
 import com.example.controller.dto.request.LoginMemberRequest;
 import com.example.controller.dto.request.RegisterMemberRequest;
-import com.example.repository.RedisRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -30,7 +29,8 @@ public class MemberController {
     public void login(@Valid @RequestBody LoginMemberRequest loginMemberRequest, HttpServletRequest request) {
         String loginId = loginMemberRequest.loginId();
         Long memberId = memberService.login(loginId, loginMemberRequest.password());
-
+        System.out.println("dssds");
+        System.out.println(memberId);
         HttpSession session = request.getSession();
         session.setAttribute("memberId", memberId);
         session.setMaxInactiveInterval(3600);

@@ -22,7 +22,6 @@ public class OrderController {
 
     @PostMapping
     public void order(@RequestBody OrderRequest request, @AuthMember Long memberId) {
-        System.out.println(memberId);
         orderService.order(request.productId(), request.quantity(), memberId, LocalDateTime.now());
     }
 }

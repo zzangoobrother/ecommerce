@@ -1,5 +1,6 @@
 package com.example.global.config.auth;
 
+import com.example.repository.RedisRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.core.MethodParameter;
@@ -11,6 +12,12 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Component
 public class AuthMemberArgumentResolver implements HandlerMethodArgumentResolver {
+    private final RedisRepository redisRepository;
+
+    public AuthMemberArgumentResolver(RedisRepository redisRepository) {
+        this.redisRepository = redisRepository;
+    }
+
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.hasParameterAnnotation(AuthMember.class);
