@@ -2,6 +2,7 @@ package com.example.filter;
 
 import com.example.repository.RedisRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpCookie;
@@ -13,10 +14,16 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.Base64;
+
 @Slf4j
 @Component
 public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> {
     private static final String SESSION_KEY = "JSESSIONID";
+    private static final String REDIS_SESSION_KEY = ":sessions:";
+
+    @Value("${spring.session.redis.namespace}")
+    private String namespace;
     
     private final ExcludeProperties excludeProperties;
     private final RedisRepository redisRepository;
@@ -46,7 +53,8 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
 
             HttpCookie httpCookie = cookies.get(SESSION_KEY).getFirst();
             String sessionID  = httpCookie.getValue();
-            if (!redisRepository.hasKey(sessionID)) {
+            String decodedSessionId = new String(Base64.getDecoder().decode(sessionID.getBytes()));
+            if (!redisRepository.hasKey(namespace + REDIS_SESSION_KEY + decodedSessionId)) {
                 return failAuthResponse(exchange);
             }
 

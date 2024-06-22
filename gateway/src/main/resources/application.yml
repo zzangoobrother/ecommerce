@@ -10,5 +10,14 @@ route:
     v1:
       base-url: http://localhost:8081
 
+spring:
+  config:
+    import:
+      - redis.yml
+  cloud:
+    gateway:
+      default-filters:
+        - name : AuthFilter
+
 exclude:
   uri: /api/v1/members/signup, /api/v1/members/login

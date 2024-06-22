@@ -20,4 +20,14 @@ public class Product {
         this.price = price;
         this.quantity = quantity;
     }
+
+    public void checkQuantity(int quantity) {
+        if (this.quantity - quantity < 0) {
+            throw new IllegalStateException("재고 수량이 부족합니다.");
+        }
+    }
+
+    public void deducted(int quantity) {
+        this.quantity -= quantity;
+    }
 }

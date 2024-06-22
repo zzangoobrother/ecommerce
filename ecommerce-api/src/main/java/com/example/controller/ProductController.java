@@ -4,6 +4,7 @@ import com.example.application.ProductService;
 import com.example.controller.dto.request.CreateProductRequest;
 import com.example.controller.dto.response.ProductResponse;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class ProductController {
         this.productService = productService;
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Long create(@Valid @RequestBody CreateProductRequest request) {
         return productService.create(request.name(), request.price(), request.quantity());

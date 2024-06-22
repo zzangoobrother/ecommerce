@@ -2,6 +2,7 @@ spring:
   config:
     import:
       - db.yml
+      - redis.yml
 
 server:
   port: 8081
