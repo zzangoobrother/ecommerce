@@ -27,10 +27,12 @@ public class MemberService {
         ).getId();
     }
 
-    public void login(String loginId, String password) {
+    public Long login(String loginId, String password) {
         Member member = memberRepository.getBy(loginId);
         if (!password.equals(member.getPassword())) {
             throw new IllegalArgumentException("아이디/비밀번호를 다시 입력해 주세요.");
         }
+
+        return member.getId();
     }
 }

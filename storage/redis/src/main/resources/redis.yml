@@ -3,3 +3,14 @@ spring:
     redis:
       host: localhost
       port: 6379
+
+  session:
+    store-type: redis
+    redis:
+      namespace: auth:session
+
+server:
+  servlet:
+    session:
+      cookie:
+        name: JSESSIONID

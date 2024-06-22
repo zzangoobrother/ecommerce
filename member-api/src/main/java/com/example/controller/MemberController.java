@@ -7,23 +7,20 @@ import com.example.repository.RedisRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/members")
 @RestController
 public class MemberController {
 
     private final MemberService memberService;
-    private final RedisRepository redisRepository;
 
-    public MemberController(MemberService memberService, RedisRepository redisRepository) {
+    public MemberController(MemberService memberService) {
         this.memberService = memberService;
-        this.redisRepository = redisRepository;
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/signup")
     public Long register(@Valid @RequestBody RegisterMemberRequest request) {
         return memberService.register(request.loginId(), request.password(), request.name());
@@ -32,12 +29,10 @@ public class MemberController {
     @PostMapping("/login")
     public void login(@Valid @RequestBody LoginMemberRequest loginMemberRequest, HttpServletRequest request) {
         String loginId = loginMemberRequest.loginId();
-        memberService.login(loginId, loginMemberRequest.password());
+        Long memberId = memberService.login(loginId, loginMemberRequest.password());
 
         HttpSession session = request.getSession();
-        session.setAttribute("memberId", loginId);
+        session.setAttribute("memberId", memberId);
         session.setMaxInactiveInterval(3600);
-
-        redisRepository.add(session.getId(), loginId);
     }
 }

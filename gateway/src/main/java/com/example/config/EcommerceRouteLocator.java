@@ -1,5 +1,6 @@
 package com.example.config;
 
+import com.example.filter.AuthFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
@@ -15,11 +16,12 @@ public class EcommerceRouteLocator {
     private final String gatewayPath = "/api/v1/";
 
     @Bean
-    public RouteLocator getEcommerceRoute(RouteLocatorBuilder routeLocatorBuilder) {
+    public RouteLocator getEcommerceRoute(RouteLocatorBuilder routeLocatorBuilder, AuthFilter authFilter) {
         return routeLocatorBuilder.routes()
                 .route("ecommerce-api",
                         r -> r.path(gatewayPath + "**")
-                                .filters(f -> f.rewritePath(gatewayPath + "(?<servicePath>.*)", "/${servicePath}"))
+                                .filters(f -> f.filter(authFilter.apply(new AuthFilter.Config()))
+                                        .rewritePath(gatewayPath + "(?<servicePath>.*)", "/${servicePath}"))
                                 .uri(baseUrl)
                 )
                 .build();
