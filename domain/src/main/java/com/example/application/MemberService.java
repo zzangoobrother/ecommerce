@@ -29,6 +29,8 @@ public class MemberService {
 
     public Long login(String loginId, String password) {
         Member member = memberRepository.getBy(loginId);
+        System.out.println(member.getId());
+        System.out.println(member.getLoginId());
         if (!password.equals(member.getPassword())) {
             throw new IllegalArgumentException("아이디/비밀번호를 다시 입력해 주세요.");
         }

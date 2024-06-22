@@ -32,6 +32,7 @@ public class OrderDetailEntity extends BaseTimeEntity {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
+    @Enumerated(value = EnumType.STRING)
     @Column(name = "status", nullable = false)
     private OrderDetail.OrderStatus status;
 

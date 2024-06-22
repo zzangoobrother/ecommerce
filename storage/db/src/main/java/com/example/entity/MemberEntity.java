@@ -28,7 +28,8 @@ public class MemberEntity {
     private String name;
 
     @Builder
-    public MemberEntity(String loginId, String password, String name) {
+    public MemberEntity(Long id, String loginId, String password, String name) {
+        this.id = id;
         this.loginId = loginId;
         this.password = password;
         this.name = name;
@@ -36,6 +37,7 @@ public class MemberEntity {
 
     public Member toMember() {
         return Member.builder()
+                .id(getId())
                 .loginId(getLoginId())
                 .password(getPassword())
                 .name(getName())

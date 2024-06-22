@@ -21,4 +21,9 @@ public class RedisRepositoryImpl implements RedisRepository {
     public void add(String key, String value) {
         redisTemplate.opsForValue().set(key, value);
     }
+
+    @Override
+    public String get(String key) {
+        return redisTemplate.opsForValue().get(key);
+    }
 }
