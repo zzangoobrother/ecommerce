@@ -20,7 +20,8 @@ public class EcommerceRouteLocator {
         return routeLocatorBuilder.routes()
                 .route("ecommerce-api",
                         r -> r.path(gatewayPath + "**")
-                                .filters(f -> f.filter(authFilter.apply(new AuthFilter.Config()))
+                                .filters(f -> f.circuitBreaker(c -> c.setName("ecommerce-circuit-breaker").setFallbackUri("forward:/fallback-circuit"))
+                                        .filter(authFilter.apply(new AuthFilter.Config()))
                                         .rewritePath(gatewayPath + "(?<servicePath>.*)", "/${servicePath}"))
                                 .uri(baseUrl)
                 )

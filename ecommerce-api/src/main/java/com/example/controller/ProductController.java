@@ -36,4 +36,13 @@ public class ProductController {
     public ProductResponse getBy(@PathVariable("productId") Long productId) {
         return ProductResponse.toProductResponse(productService.getBy(productId));
     }
+
+    @GetMapping("/test")
+    public void test() {
+        try {
+            Thread.sleep(15000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("circuit breaker test");
+        }
+    }
 }

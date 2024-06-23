@@ -22,7 +22,8 @@ public class MemberRouteLocator {
         return routeLocatorBuilder.routes()
                 .route("member-api",
                         r -> r.path(gatewayPath + "members/**")
-                                .filters(f -> f.filter(authFilter.apply(new AuthFilter.Config()))
+                                .filters(f -> f.circuitBreaker(c -> c.setName("member-circuit-breaker").setFallbackUri("forward:/fallback-circuit"))
+                                        .filter(authFilter.apply(new AuthFilter.Config()))
                                         .rewritePath(gatewayPath + "(?<servicePath>.*)", "/${servicePath}"))
                                 .uri(baseUrl)
                 )

@@ -29,10 +29,18 @@ public class MemberController {
     public void login(@Valid @RequestBody LoginMemberRequest loginMemberRequest, HttpServletRequest request) {
         String loginId = loginMemberRequest.loginId();
         Long memberId = memberService.login(loginId, loginMemberRequest.password());
-        System.out.println("dssds");
-        System.out.println(memberId);
+
         HttpSession session = request.getSession();
         session.setAttribute("memberId", memberId);
         session.setMaxInactiveInterval(3600);
+    }
+
+    @GetMapping("/test")
+    public void test() {
+        try {
+            Thread.sleep(15000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("circuit breaker test");
+        }
     }
 }
