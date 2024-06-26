@@ -29,7 +29,7 @@ public class OrderService {
     }
 
     @Transactional
-    public void order(Long productId, int quantity, Long memberId, LocalDateTime now) {
+    public String order(Long productId, int quantity, Long memberId, LocalDateTime now) {
         // 상품 재고 확인
         Product product = productRepository.getBy(productId);
         product.checkQuantity(quantity);
@@ -58,5 +58,7 @@ public class OrderService {
 
         product.deducted(quantity);
         productRepository.save(product);
+
+        return order.getOrdersCode();
     }
 }

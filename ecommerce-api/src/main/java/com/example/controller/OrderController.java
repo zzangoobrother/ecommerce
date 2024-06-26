@@ -3,10 +3,8 @@ package com.example.controller;
 import com.example.application.OrderService;
 import com.example.global.config.auth.AuthMember;
 import com.example.controller.dto.request.OrderRequest;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
@@ -20,8 +18,9 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public void order(@RequestBody OrderRequest request, @AuthMember Long memberId) {
-        orderService.order(request.productId(), request.quantity(), memberId, LocalDateTime.now());
+    public String order(@RequestBody OrderRequest request, @AuthMember Long memberId) {
+        return orderService.order(request.productId(), request.quantity(), memberId, LocalDateTime.now());
     }
 }
