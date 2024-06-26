@@ -35,6 +35,13 @@ class ProductEntityRepository implements ProductRepository {
     }
 
     @Override
+    public Product getLockBy(Long productId) {
+        return repository.findLockById(productId).orElseThrow(
+                () -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다.")
+        ).toProduct();
+    }
+
+    @Override
     public boolean existsBy(String name) {
         return repository.existsByName(name);
     }

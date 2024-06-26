@@ -11,5 +11,7 @@ public interface ProductRepository {
 
     Product getBy(Long productId);
 
+    Product getLockBy(Long productId);
+
     boolean existsBy(String name);
 }
