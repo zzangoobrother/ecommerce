@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class OrderService {
@@ -31,7 +32,7 @@ public class OrderService {
     @Transactional
     public String order(Long productId, int quantity, Long memberId, LocalDateTime now) {
         // 상품 재고 확인
-        Product product = productRepository.getBy(productId);
+        Product product = productRepository.getLockBy(productId);
         product.checkQuantity(quantity);
 
         // 결제하기
@@ -43,7 +44,7 @@ public class OrderService {
         // 주문서 생성
         Order order = Order.builder()
                 .memberId(memberId)
-                .ordersCode(now.toLocalDate().toString() + now.toLocalTime().toString())
+                .ordersCode(now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")))
                 .build();
         Order createOrder = orderRepository.save(order);
 
