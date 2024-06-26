@@ -9,6 +9,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.concurrent.CompletableFuture;
 
 import static com.example.acceptance.OrderSteps.주문하기_요청;
+import static com.example.acceptance.ProductSteps.상품_단건_조회_요청;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -25,9 +28,14 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         given(authMemberArgumentResolver.supportsParameter(any())).willReturn(true);
         given(authMemberArgumentResolver.resolveArgument(any(), any(), any(), any())).willReturn(1L);
 
-        ExtractableResponse<Response> response = 주문하기_요청(productId, quantity);
+        주문하기_요청(productId, quantity);
 
-        System.out.println(response);
+        ExtractableResponse<Response> response = 상품_단건_조회_요청(productId);
+
+        assertAll(
+                () -> assertThat(response.jsonPath().getLong("productId")).isEqualTo(productId),
+                () -> assertThat(response.jsonPath().getLong("quantity")).isEqualTo(90)
+        );
     }
 
     @Test
@@ -35,11 +43,16 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         given(authMemberArgumentResolver.supportsParameter(any())).willReturn(true);
         given(authMemberArgumentResolver.resolveArgument(any(), any(), any(), any())).willReturn(1L);
 
-        ExtractableResponse<Response> response = 주문하기_요청(productId, quantity);
-
-        System.out.println(response);
+        주문하기_요청(productId, quantity);
 
         주문하기_요청(productId, quantity);
+
+        ExtractableResponse<Response> response = 상품_단건_조회_요청(productId);
+
+        assertAll(
+                () -> assertThat(response.jsonPath().getLong("productId")).isEqualTo(productId),
+                () -> assertThat(response.jsonPath().getLong("quantity")).isEqualTo(80)
+        );
     }
 
     @Test
@@ -51,6 +64,13 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                 CompletableFuture.runAsync(() -> 주문하기_요청(productId, quantity)),
                 CompletableFuture.runAsync(() -> 주문하기_요청(productId, quantity))
         ).join();
+
+        ExtractableResponse<Response> response = 상품_단건_조회_요청(productId);
+
+        assertAll(
+                () -> assertThat(response.jsonPath().getLong("productId")).isEqualTo(productId),
+                () -> assertThat(response.jsonPath().getLong("quantity")).isEqualTo(80)
+        );
     }
 
     @Test
@@ -63,5 +83,12 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                 CompletableFuture.runAsync(() -> 주문하기_요청(productId, quantity)),
                 CompletableFuture.runAsync(() -> 주문하기_요청(productId, quantity))
         ).join();
+
+        ExtractableResponse<Response> response = 상품_단건_조회_요청(productId);
+
+        assertAll(
+                () -> assertThat(response.jsonPath().getLong("productId")).isEqualTo(productId),
+                () -> assertThat(response.jsonPath().getLong("quantity")).isEqualTo(70)
+        );
     }
 }
