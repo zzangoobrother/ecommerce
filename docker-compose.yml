@@ -1,0 +1,60 @@
+version: '3'
+services:
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: 'ecommerce'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: '1234'
+      MYSQL_ROOT_PASSWORD: '1234'
+    ports:
+      - '3306:3306'
+    volumes:
+      - 'mysqldata:/var/lib/mysql'
+
+    networks:
+      - ecommerce_test
+
+  redis_container:
+    image: redis:latest
+    container_name: redis_test
+    ports:
+      - 6379:6379
+    volumes:
+      - ./redis/data:/data
+      - ./redis/conf/redis.conf:/usr/local/conf/redis.conf
+
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+
+    networks:
+      - ecommerce_test
+
+    command: redis-server /usr/local/conf/redis.conf
+
+  controller:
+    image: ngrinder/controller
+    restart: always
+    ports:
+      - "9000:80"
+      - "16001:16001"
+      - "12000-12009:12000-12009"
+    volumes:
+      - ./ngrinder-controller:/opt/ngrinder-controller
+
+    networks:
+      - ecommerce_test
+  agent:
+    image: ngrinder/agent
+    restart: always
+    links:
+      - controller
+    networks:
+      - ecommerce_test
+
+volumes:
+  mysqldata:
+
+networks:
+  ecommerce_test:
