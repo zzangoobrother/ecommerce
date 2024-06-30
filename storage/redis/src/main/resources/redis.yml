@@ -1,4 +1,27 @@
 spring:
+  config:
+    activate:
+      on-profile: local
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  session:
+    store-type: redis
+
+server:
+  servlet:
+    session:
+      cookie:
+        name: JSESSIONID
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
   data:
     redis:
       host: redis_test

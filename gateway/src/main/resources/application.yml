@@ -1,23 +1,18 @@
-server:
-  port: 8083
-
-route:
-  member-api:
-    v1:
-      base-url: http://member-api:8080
-
-  ecommerce-api:
-    v1:
-      base-url: http://ecommerce-api:8081
-
 spring:
+  profiles:
+    default: local
+
   config:
     import:
       - redis.yml
+
   cloud:
     gateway:
       default-filters:
-        - name : AuthFilter
+        - name: AuthFilter
+
+server:
+  port: 8083
 
 exclude:
   uri: /api/v1/members/signup, /api/v1/members/login
