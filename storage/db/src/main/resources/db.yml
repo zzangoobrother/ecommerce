@@ -1,10 +1,27 @@
 spring:
+  config:
+    activate:
+      on-profile: local
+
   datasource:
     hikari:
-#      driver-class-name: org.h2.Driver
-#      username: sa
-#      password: 123
-#      jdbc-url: jdbc:h2:tcp://localhost/~/study;MODE=MYSQL
+      driver-class-name: org.h2.Driver
+      username: sa
+      password: 123
+      jdbc-url: jdbc:h2:tcp://localhost/~/study;MODE=MYSQL
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    hikari:
       driver-class-name: com.mysql.cj.jdbc.Driver
       jdbc-url: jdbc:mysql://ecommerce-db-1:3306/ecommerce?useUnicode=true&serverTimezone=Asia/Seoul&autoReconnect=true&rewriteBatchedStatements=true
       username: root
@@ -13,4 +30,3 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true

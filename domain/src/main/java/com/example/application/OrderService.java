@@ -44,7 +44,7 @@ public class OrderService {
         // 주문서 생성
         Order order = Order.builder()
                 .memberId(memberId)
-                .ordersCode(now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")))
+                .ordersCode(now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + String.format("%04d", (int) (Math.random() * 9998 + 1)))
                 .build();
         Order createOrder = orderRepository.save(order);
 

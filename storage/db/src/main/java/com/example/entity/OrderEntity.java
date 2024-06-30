@@ -22,7 +22,7 @@ public class OrderEntity extends BaseTimeEntity {
     @Column(name = "member_id", nullable = false)
     private Long memberId;
 
-    @Column(name = "orders_code", nullable = false, length = 50)
+    @Column(name = "orders_code", unique = true, nullable = false, length = 50)
     private String ordersCode;
 
     @Builder

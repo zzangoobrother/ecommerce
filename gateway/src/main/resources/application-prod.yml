@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+route:
+  member-api:
+    v1:
+      base-url: http://member-api:8080
+
+  ecommerce-api:
+    v1:
+      base-url: http://ecommerce-api:8081
