@@ -2,7 +2,6 @@ package com.example.filter;
 
 import com.example.repository.RedisRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpCookie;
@@ -49,7 +48,7 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
                 return failAuthResponse(exchange);
             }
 
-            HttpCookie httpCookie = cookies.get(SESSION_KEY).getFirst();
+            HttpCookie httpCookie = cookies.get(SESSION_KEY).get(0);
             String sessionID  = httpCookie.getValue();
             String decodedSessionId = new String(Base64.getDecoder().decode(sessionID.getBytes()));
             if (!redisRepository.hasKey(namespace + REDIS_SESSION_KEY + decodedSessionId)) {

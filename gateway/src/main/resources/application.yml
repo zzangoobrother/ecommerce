@@ -4,11 +4,11 @@ server:
 route:
   member-api:
     v1:
-      base-url: http://localhost:8080
+      base-url: http://member-api:8080
 
   ecommerce-api:
     v1:
-      base-url: http://localhost:8081
+      base-url: http://ecommerce-api:8081
 
 spring:
   config:
