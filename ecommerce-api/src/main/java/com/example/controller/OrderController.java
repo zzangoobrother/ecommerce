@@ -21,6 +21,6 @@ public class OrderController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public String order(@RequestBody OrderRequest request, @AuthMember Long memberId) {
-        return orderService.order(request.productId(), request.quantity(), memberId, LocalDateTime.now());
+        return orderService.order(request.productId(), request.quantity(), memberId);
     }
 }
