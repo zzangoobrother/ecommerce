@@ -3,6 +3,10 @@ spring:
     activate:
       on-profile: test
 
+    import:
+      - db.yml
+      - redis.yml
+
   jpa:
     properties:
       hibernate:
