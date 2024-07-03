@@ -1,5 +1,6 @@
 package com.example.application;
 
+import com.example.annotation.DistributedLock;
 import com.example.model.Order;
 import com.example.model.OrderDetail;
 import com.example.model.Product;
@@ -32,6 +33,40 @@ public class OrderService {
     public String order(Long productId, int quantity, Long memberId) {
         // 상품 재고 확인
         Product product = productRepository.getLockBy(productId);
+        product.checkQuantity(quantity);
+
+        // 결제하기
+        // 이 계산 로직은 어디에 있는게 좋을까?
+        // 상품? 결제? 주문?
+        BigDecimal totalPrice = product.getPrice().multiply(BigDecimal.valueOf(quantity));
+        paymentRepository.payment(totalPrice);
+
+        // 주문서 생성
+        Order order = Order.builder()
+                .memberId(memberId)
+                .ordersCode(OrderCodeSequence.create(LocalDateTime.now()))
+                .build();
+        Order createOrder = orderRepository.save(order);
+
+        OrderDetail orderDetail = OrderDetail.builder()
+                .ordersId(createOrder.getId())
+                .productId(productId)
+                .quantity(quantity)
+                .price(totalPrice)
+                .status(OrderDetail.OrderStatus.COMPLETE)
+                .build();
+        orderDetailRepository.save(orderDetail);
+
+        product.deducted(quantity);
+        productRepository.save(product);
+
+        return order.getOrdersCode();
+    }
+
+    @DistributedLock(key = "#productId")
+    public String orderByRedisLock(Long productId, int quantity, Long memberId) {
+        // 상품 재고 확인
+        Product product = productRepository.getBy(productId);
         product.checkQuantity(quantity);
 
         // 결제하기

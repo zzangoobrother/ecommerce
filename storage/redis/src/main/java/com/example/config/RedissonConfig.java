@@ -18,10 +18,10 @@ public class RedissonConfig {
 
     @Bean
     public RedissonClient redissonClient() {
-        RedissonClient redissonClient = null;
+        RedissonClient redisson;
         Config config = new Config();
         config.useSingleServer().setAddress(REDISSON_HOST_PREFIX + redisProperties.host() + ":" + redisProperties.port());
-        redissonClient = Redisson.create(config);
-        return redissonClient;
+        redisson = Redisson.create(config);
+        return redisson;
     }
 }
