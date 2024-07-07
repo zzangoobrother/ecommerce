@@ -11,6 +11,7 @@ include(
         "domain",
         "ecommerce-api",
         "product-api",
+        "payment-api",
         "order-api",
         "member-api",
         "storage:db",
