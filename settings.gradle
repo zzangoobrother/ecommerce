@@ -16,5 +16,6 @@ include(
         "member-api",
         "storage:db",
         "storage:redis",
+        "support:feign",
         "gateway"
 )

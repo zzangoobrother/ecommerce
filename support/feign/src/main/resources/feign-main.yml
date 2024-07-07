@@ -1,0 +1,26 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+product:
+  api:
+    url: http://localhost:8085
+
+payment:
+  api:
+    url: http://localhost:8087
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+product:
+  api:
+    url: http://product-api:8085
+
+payment:
+  api:
+    url: http://payment-api:8087
