@@ -11,3 +11,7 @@ route:
   ecommerce-api:
     v1:
       base-url: http://ecommerce-api:8081
+
+  product-api:
+    v1:
+      base-url: http://product-api:8085

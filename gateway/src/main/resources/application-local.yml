@@ -11,3 +11,7 @@ route:
   ecommerce-api:
     v1:
       base-url: http://localhost:8081
+
+  product-api:
+    v1:
+      base-url: http://localhost:8085
