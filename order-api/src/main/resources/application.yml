@@ -1,0 +1,11 @@
+spring:
+  profiles:
+    default: local
+
+  config:
+    import:
+      - db.yml
+      - redis.yml
+
+server:
+  port: 8086

@@ -15,3 +15,7 @@ route:
   product-api:
     v1:
       base-url: http://product-api:8085
+
+  order-api:
+    v1:
+      base-url: http://order-api:8086
