@@ -6,9 +6,9 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @ConfigurationPropertiesScan
 @SpringBootApplication(scanBasePackages = "com.example")
-public class MemberApiApplication {
+public class ProductApiApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MemberApiApplication.class, args);
+        SpringApplication.run(ProductApiApplication.class, args);
     }
 }

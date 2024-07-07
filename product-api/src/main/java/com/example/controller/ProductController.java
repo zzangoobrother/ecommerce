@@ -4,11 +4,13 @@ import com.example.application.ProductService;
 import com.example.controller.dto.request.CreateProductRequest;
 import com.example.controller.dto.response.ProductResponse;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RequestMapping("/products")
 @RestController
 public class ProductController {
@@ -22,11 +24,13 @@ public class ProductController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Long create(@Valid @RequestBody CreateProductRequest request) {
+        log.info("create");
         return productService.create(request.name(), request.price(), request.quantity());
     }
 
     @GetMapping
     public List<ProductResponse> getAll() {
+        log.info("getAll");
         return productService.getAll().stream()
                 .map(ProductResponse::toProductResponse)
                 .toList();
