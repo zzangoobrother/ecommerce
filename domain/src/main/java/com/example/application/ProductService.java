@@ -41,4 +41,11 @@ public class ProductService {
         Product product = productRepository.getBy(productId);
         return ProductDomainResponse.toProductDomainResponse(product);
     }
+
+    public void decrease(Long productId, int quantity) {
+        Product product = productRepository.getBy(productId);
+        product.deducted(quantity);
+
+        productRepository.save(product);
+    }
 }
