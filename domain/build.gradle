@@ -8,6 +8,7 @@ tasks.getByName("jar") {
 
 dependencies {
     implementation(project(':storage:redis'))
+    implementation(project(':support:feign'))
 
     compileOnly 'org.springframework:spring-tx'
 

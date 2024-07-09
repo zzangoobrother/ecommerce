@@ -6,3 +6,4 @@ spring:
     import:
       - db.yml
       - redis.yml
+      - feign-main.yml
