@@ -1,14 +1,15 @@
 package com.example.application;
 
 import com.example.annotation.DistributedLock;
+import com.example.client.PaymentClient;
 import com.example.client.ProductClient;
+import com.example.client.dto.request.PaymentRequest;
 import com.example.client.dto.request.ProductDecreaseRequest;
 import com.example.client.dto.response.ProductResponse;
 import com.example.model.Order;
 import com.example.model.OrderDetail;
 import com.example.repository.OrderDetailRepository;
 import com.example.repository.OrderRepository;
-import com.example.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,13 +20,13 @@ import java.time.LocalDateTime;
 public class OrderService {
 
     private final ProductClient productClient;
-    private final PaymentRepository paymentRepository;
+    private final PaymentClient paymentClient;
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
 
-    public OrderService(ProductClient productClient, PaymentRepository paymentRepository, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository) {
+    public OrderService(ProductClient productClient, PaymentClient paymentClient, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository) {
         this.productClient = productClient;
-        this.paymentRepository = paymentRepository;
+        this.paymentClient = paymentClient;
         this.orderRepository = orderRepository;
         this.orderDetailRepository = orderDetailRepository;
     }
@@ -44,13 +45,14 @@ public class OrderService {
         // 결제하기
         // 이 계산 로직은 어디에 있는게 좋을까?
         // 상품? 결제? 주문?
+        String orderCode = OrderCodeSequence.create(LocalDateTime.now());
         BigDecimal totalPrice = productResponse.price().multiply(BigDecimal.valueOf(quantity));
-        paymentRepository.payment(totalPrice);
+        paymentClient.payment(new PaymentRequest(orderCode, totalPrice));
 
         // 주문서 생성
         Order order = Order.builder()
                 .memberId(memberId)
-                .ordersCode(OrderCodeSequence.create(LocalDateTime.now()))
+                .ordersCode(orderCode)
                 .build();
         Order createOrder = orderRepository.save(order);
 
@@ -79,13 +81,14 @@ public class OrderService {
         // 결제하기
         // 이 계산 로직은 어디에 있는게 좋을까?
         // 상품? 결제? 주문?
+        String orderCode = OrderCodeSequence.create(LocalDateTime.now());
         BigDecimal totalPrice = productResponse.price().multiply(BigDecimal.valueOf(quantity));
-        paymentRepository.payment(totalPrice);
+        paymentClient.payment(new PaymentRequest(orderCode, totalPrice));
 
         // 주문서 생성
         Order order = Order.builder()
                 .memberId(memberId)
-                .ordersCode(OrderCodeSequence.create(LocalDateTime.now()))
+                .ordersCode(orderCode)
                 .build();
         Order createOrder = orderRepository.save(order);
 

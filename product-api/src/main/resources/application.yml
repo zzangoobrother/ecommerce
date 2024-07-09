@@ -6,6 +6,7 @@ spring:
     import:
       - db.yml
       - redis.yml
+      - feign-main.yml
 
 server:
   port: 8085

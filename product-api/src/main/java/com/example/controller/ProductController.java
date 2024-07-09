@@ -2,6 +2,7 @@ package com.example.controller;
 
 import com.example.application.ProductService;
 import com.example.controller.dto.request.CreateProductRequest;
+import com.example.controller.dto.request.ProductDecreaseRequest;
 import com.example.controller.dto.response.ProductResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,11 @@ public class ProductController {
     public Long create(@Valid @RequestBody CreateProductRequest request) {
         log.info("create");
         return productService.create(request.name(), request.price(), request.quantity());
+    }
+
+    @PostMapping("/{productId}/decrease")
+    public void decrease(@PathVariable Long productId, @RequestBody ProductDecreaseRequest request) {
+        productService.decrease(productId, request.quantity());
     }
 
     @GetMapping

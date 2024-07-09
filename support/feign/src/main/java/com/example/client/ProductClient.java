@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.*;
 @FeignClient(value = "productClient", url = "${product.api.url}")
 public interface ProductClient {
 
-    @GetMapping(value = "/{productId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/products/{productId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     ProductResponse getBy(@PathVariable Long productId);
 
-    @PostMapping(value = "/{productId}/decrease", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/products/{productId}/decrease", consumes = MediaType.APPLICATION_JSON_VALUE)
     ProductResponse decrease(@PathVariable Long productId, @RequestBody ProductDecreaseRequest request);
 }
