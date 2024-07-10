@@ -35,7 +35,6 @@ services:
 
   controller:
     image: ngrinder/controller
-    restart: always
     ports:
       - "9000:80"
       - "16001:16001"
@@ -47,9 +46,26 @@ services:
       - ecommerce_test
   agent:
     image: ngrinder/agent
-    restart: always
     links:
       - controller
+    networks:
+      - ecommerce_test
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq-stream
+    volumes:
+      - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
+      - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/
+      - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "RabbitMQ-My-Cookies"
+      RABBITMQ_DEFAULT_USER: "admin"
+      RABBITMQ_DEFAULT_PASS: "admin"
+
     networks:
       - ecommerce_test
 
