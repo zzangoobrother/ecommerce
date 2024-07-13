@@ -19,6 +19,18 @@ public class PaymentService {
         paymentRepository.payment(Payment.builder()
                 .ordersCode(orderCode)
                 .price(price)
+                .status(Payment.Status.SUCCESS)
                 .build());
+    }
+
+    public void cancel(String orderCode) {
+        Payment payment = paymentRepository.getBy(orderCode);
+        if (payment.getStatus() == Payment.Status.CANCEL) {
+            throw new IllegalStateException("주문 취소된 결제 건 입니다.");
+        }
+
+        payment.cancel();
+
+        paymentRepository.save(payment);
     }
 }
