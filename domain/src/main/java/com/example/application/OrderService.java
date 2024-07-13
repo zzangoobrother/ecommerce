@@ -3,6 +3,7 @@ package com.example.application;
 import com.example.annotation.DistributedLock;
 import com.example.client.PaymentClient;
 import com.example.client.ProductClient;
+import com.example.client.dto.request.PaymentCancelRequest;
 import com.example.client.dto.request.PaymentRequest;
 import com.example.client.dto.request.ProductDecreaseRequest;
 import com.example.client.dto.response.ProductResponse;
@@ -78,31 +79,38 @@ public class OrderService {
             throw new IllegalStateException("재고 수량이 부족합니다.");
         }
 
-        // 결제하기
-        // 이 계산 로직은 어디에 있는게 좋을까?
-        // 상품? 결제? 주문?
         String orderCode = OrderCodeSequence.create(LocalDateTime.now());
-        BigDecimal totalPrice = productResponse.price().multiply(BigDecimal.valueOf(quantity));
-        paymentClient.payment(new PaymentRequest(orderCode, totalPrice));
 
-        // 주문서 생성
-        Order order = Order.builder()
-                .memberId(memberId)
-                .ordersCode(orderCode)
-                .build();
-        Order createOrder = orderRepository.save(order);
+        try {
+            // 결제하기
+            // 이 계산 로직은 어디에 있는게 좋을까?
+            // 상품? 결제? 주문?
+            BigDecimal totalPrice = productResponse.price().multiply(BigDecimal.valueOf(quantity));
+            paymentClient.payment(new PaymentRequest(orderCode, totalPrice));
 
-        OrderDetail orderDetail = OrderDetail.builder()
-                .ordersId(createOrder.getId())
-                .productId(productId)
-                .quantity(quantity)
-                .price(totalPrice)
-                .status(OrderDetail.OrderStatus.COMPLETE)
-                .build();
-        orderDetailRepository.save(orderDetail);
+            // 주문서 생성
+            Order order = Order.builder()
+                    .memberId(memberId)
+                    .ordersCode(orderCode)
+                    .build();
+            Order createOrder = orderRepository.save(order);
 
-        productClient.decrease(productId, new ProductDecreaseRequest(quantity));
+            OrderDetail orderDetail = OrderDetail.builder()
+                    .ordersId(createOrder.getId())
+                    .productId(productId)
+                    .quantity(quantity)
+                    .price(totalPrice)
+                    .status(OrderDetail.OrderStatus.COMPLETE)
+                    .build();
+            orderDetailRepository.save(orderDetail);
 
-        return order.getOrdersCode();
+            productClient.decrease(productId, new ProductDecreaseRequest(quantity));
+
+            return order.getOrdersCode();
+        } catch (RuntimeException e) {
+            paymentClient.cancel(new PaymentCancelRequest(orderCode));
+        }
+
+        return null;
     }
 }

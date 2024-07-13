@@ -19,8 +19,8 @@ public class OrderController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public String order(@RequestBody OrderRequest request, @AuthMember Long memberId) {
-        return orderService.order(request.productId(), request.quantity(), memberId);
+//        return orderService.order(request.productId(), request.quantity(), memberId);
 
-//        return orderService.orderByRedisLock(request.productId(), request.quantity(), memberId);
+        return orderService.orderByRedisLock(request.productId(), request.quantity(), memberId);
     }
 }
