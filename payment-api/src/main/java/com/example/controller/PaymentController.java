@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.application.PaymentService;
+import com.example.controller.dto.request.PaymentCancelRequest;
 import com.example.controller.dto.request.PaymentRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,5 +23,10 @@ public class PaymentController {
     @PostMapping
     public void payment(@RequestBody PaymentRequest request) {
         paymentService.payment(request.orderCode(), request.price());
+    }
+
+    @PostMapping("/cancel")
+    public void cancel(@RequestBody PaymentCancelRequest request) {
+        paymentService.cancel(request.orderCode());
     }
 }
