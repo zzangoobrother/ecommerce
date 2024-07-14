@@ -17,5 +17,6 @@ include(
         "storage:db",
         "storage:redis",
         "support:feign",
+        "support:rabbitmq",
         "gateway"
 )
