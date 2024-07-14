@@ -1,19 +1,37 @@
 package com.example.config;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.FanoutExchange;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMqConfig {
+    @Value("${rabbitmq.exchange.name}")
+    private String exchangeName;
+
+    @Value("${rabbitmq.queue.product.decrease.name}")
+    private String queueProductDecreaseName;
+
+    @Value("${rabbitmq.queue.payment.name}")
+    private String queuePaymentName;
+
+    @Value("${rabbitmq.queue.payment.cancel.name}")
+    private String queuePaymentCancelName;
+
+    @Value("${rabbitmq.routing.product.decrease.key}")
+    private String routingProductDecreaseKey;
+
+    @Value("${rabbitmq.routing.payment.key}")
+    private String routingPaymentKey;
+
+    @Value("${rabbitmq.routing.payment.cancel.key}")
+    private String routingPaymentCancelKey;
 
     private final RabbitMqProperties rabbitMqProperties;
     private final RabbitMqQueueProperties rabbitMqQueueProperties;
@@ -24,32 +42,47 @@ public class RabbitMqConfig {
     }
 
     @Bean
-    public FanoutExchange exchange() {
-        return new FanoutExchange(rabbitMqQueueProperties.exchangeName());
+    public DirectExchange exchange() {
+        return new DirectExchange(exchangeName);
     }
 
     @Bean
-    public Queue productDecreasQueue() {
-        return new Queue(rabbitMqQueueProperties.productDecreaseName());
+    public Queue productDecreaseQueue() {
+        return new Queue(queueProductDecreaseName);
     }
 
     @Bean
     public Queue paymentQueue() {
-        return new Queue(rabbitMqQueueProperties.paymentName());
+        return new Queue(queuePaymentName);
     }
 
     @Bean
-    public Binding productDecreasBinding(FanoutExchange exchange, Queue productDecreasQueue) {
+    public Queue paymentCancelQueue() {
+        return new Queue(queuePaymentCancelName);
+    }
+
+    @Bean
+    public Binding productDecreasBinding(DirectExchange exchange, Queue productDecreaseQueue) {
         return BindingBuilder
-                .bind(productDecreasQueue)
-                .to(exchange);
+                .bind(productDecreaseQueue)
+                .to(exchange)
+                .with(routingProductDecreaseKey);
     }
 
     @Bean
-    public Binding paymentBinding(FanoutExchange exchange, Queue paymentQueue) {
+    public Binding paymentBinding(DirectExchange exchange, Queue paymentQueue) {
         return BindingBuilder
                 .bind(paymentQueue)
-                .to(exchange);
+                .to(exchange)
+                .with(routingPaymentKey);
+    }
+
+    @Bean
+    public Binding paymentCancelBinding(DirectExchange exchange, Queue paymentCancelQueue) {
+        return BindingBuilder
+                .bind(paymentCancelQueue)
+                .to(exchange)
+                .with(routingPaymentCancelKey);
     }
 
     @Bean
