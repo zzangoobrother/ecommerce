@@ -12,6 +12,7 @@ import com.example.model.OrderDetail;
 import com.example.repository.OrderDetailRepository;
 import com.example.repository.OrderRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -71,6 +72,7 @@ public class OrderService {
         return order.getOrdersCode();
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @DistributedLock(key = "#productId")
     public String orderByRedisLock(Long productId, int quantity, Long memberId) {
         // 상품 재고 확인

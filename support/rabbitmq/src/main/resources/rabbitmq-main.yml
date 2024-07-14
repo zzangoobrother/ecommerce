@@ -1,0 +1,44 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+rabbitmq:
+  exchange:
+    name: product-exchange
+
+  product:
+    decrease:
+      name: product-decrease-queue
+
+  payment:
+    name: payment-queue
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+rabbitmq:
+  exchange:
+    name: product-exchange
+
+  product:
+    decrease:
+      name: product-decrease-queue
+
+  payment:
+    name: payment-queue
