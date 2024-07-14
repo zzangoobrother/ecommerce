@@ -5,8 +5,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "rabbitmq")
 public record RabbitMqQueueProperties(
         String exchangeName,
-        String productDecreaseName,
-        String paymentName
+        String queueProductDecreaseName,
+        String queuePaymentName,
+        String routingProductDecreaseKey,
+        String routingPaymentKey
 ) {
 
 }

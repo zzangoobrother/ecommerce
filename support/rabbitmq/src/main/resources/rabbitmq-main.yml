@@ -6,19 +6,32 @@ spring:
   rabbitmq:
     host: localhost
     port: 5672
-    username: guest
-    password: guest
+    username: admin
+    password: admin
 
 rabbitmq:
   exchange:
     name: product-exchange
+  queue:
+    product:
+      decrease:
+        name: product-decrease-queue
 
-  product:
-    decrease:
-      name: product-decrease-queue
+    payment:
+      name: payment-queue
 
-  payment:
-    name: payment-queue
+      cancel:
+        name: payment-cancel-queue
+
+  routing:
+    product:
+      decrease:
+        key: product-decrease-key
+
+    payment:
+      key: payment-key
+      cancel:
+        key: payment-cancel-key
 
 ---
 spring:
@@ -29,16 +42,29 @@ spring:
   rabbitmq:
     host: localhost
     port: 5672
-    username: guest
-    password: guest
+    username: admin
+    password: admin
 
 rabbitmq:
   exchange:
     name: product-exchange
+  queue:
+    product:
+      decrease:
+        name: product-decrease-queue
 
-  product:
-    decrease:
-      name: product-decrease-queue
+    payment:
+      name: payment-queue
 
-  payment:
-    name: payment-queue
+      cancel:
+        name: payment-cancel-queue
+
+  routing:
+    product:
+      decrease:
+        key: product-decrease-key
+
+    payment:
+      key: payment-key
+      cancel:
+        key: payment-cancel-key

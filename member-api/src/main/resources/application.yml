@@ -7,3 +7,4 @@ spring:
       - db.yml
       - redis.yml
       - feign-main.yml
+      - rabbitmq-main.yml
