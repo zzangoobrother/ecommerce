@@ -4,6 +4,7 @@ import com.example.RabbitmqClient;
 import com.example.annotation.DistributedLock;
 import com.example.application.dto.PaymentCancelDto;
 import com.example.application.dto.PaymentDto;
+import com.example.application.dto.ProductDecreaseDto;
 import com.example.client.PaymentClient;
 import com.example.client.ProductClient;
 import com.example.client.dto.request.PaymentCancelRequest;
@@ -32,6 +33,9 @@ public class OrderService {
 
     @Value("${rabbitmq.routing.payment.cancel.key}")
     private String routingPaymentCancelKey;
+
+    @Value("${rabbitmq.routing.product.decrease.key}")
+    private String routingProductDecreaseKey;
 
     private final ProductClient productClient;
     private final PaymentClient paymentClient;
@@ -161,7 +165,8 @@ public class OrderService {
                     .build();
             orderDetailRepository.save(orderDetail);
 
-            productClient.decrease(productId, new ProductDecreaseRequest(quantity));
+            ProductDecreaseDto productDecreaseDto = new ProductDecreaseDto(productId, quantity);
+            rabbitmqClient.send(exchangeName, routingProductDecreaseKey, productDecreaseDto);
 
             return order.getOrdersCode();
         } catch (RuntimeException e) {
