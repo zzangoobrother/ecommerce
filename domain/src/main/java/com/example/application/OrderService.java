@@ -15,6 +15,7 @@ import com.example.model.Order;
 import com.example.model.OrderDetail;
 import com.example.repository.OrderDetailRepository;
 import com.example.repository.OrderRepository;
+import com.example.repository.RedisCountRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -40,13 +41,15 @@ public class OrderService {
     private final ProductClient productClient;
     private final PaymentClient paymentClient;
     private final RabbitmqClient rabbitmqClient;
+    private final RedisCountRepository redisCountRepository;
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
 
-    public OrderService(ProductClient productClient, PaymentClient paymentClient, RabbitmqClient rabbitmqClient, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository) {
+    public OrderService(ProductClient productClient, PaymentClient paymentClient, RabbitmqClient rabbitmqClient, RedisCountRepository redisCountRepository, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository) {
         this.productClient = productClient;
         this.paymentClient = paymentClient;
         this.rabbitmqClient = rabbitmqClient;
+        this.redisCountRepository = redisCountRepository;
         this.orderRepository = orderRepository;
         this.orderDetailRepository = orderDetailRepository;
     }
@@ -133,14 +136,14 @@ public class OrderService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    @DistributedLock(key = "#productId")
     public String orderByRabbitmq(Long productId, int quantity, Long memberId) {
         // 상품 재고 확인
-        ProductResponse productResponse = productClient.getBy(productId);
-        if (productResponse.quantity() - quantity < 0) {
+        Long decrementQuantity = redisCountRepository.decrement("product-" + productId, (long) quantity);
+        if (decrementQuantity - quantity < 0) {
             throw new IllegalStateException("재고 수량이 부족합니다.");
         }
 
+        ProductResponse productResponse = productClient.getBy(productId);
         String orderCode = OrderCodeSequence.create(LocalDateTime.now());
 
         try {

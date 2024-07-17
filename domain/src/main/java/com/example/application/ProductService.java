@@ -3,6 +3,7 @@ package com.example.application;
 import com.example.application.dto.ProductDomainResponse;
 import com.example.model.Product;
 import com.example.repository.ProductRepository;
+import com.example.repository.RedisCountRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -12,9 +13,11 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final RedisCountRepository redisCountRepository;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, RedisCountRepository redisCountRepository) {
         this.productRepository = productRepository;
+        this.redisCountRepository = redisCountRepository;
     }
 
     public Long create(String name, BigDecimal price, int quantity) {
@@ -28,6 +31,9 @@ public class ProductService {
                 .quantity(quantity)
                 .build();
         Product saveProduct = productRepository.save(product);
+
+        redisCountRepository.add("product-" + saveProduct.getId(), (long) quantity);
+
         return saveProduct.getId();
     }
 
