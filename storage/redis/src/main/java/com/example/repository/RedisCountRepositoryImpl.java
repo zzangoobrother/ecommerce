@@ -23,7 +23,22 @@ public class RedisCountRepositoryImpl implements RedisCountRepository {
     }
 
     @Override
+    public Long increment(String key, Long value) {
+        return redisTemplate.opsForValue().increment(key, value);
+    }
+
+    @Override
     public Long get(String key) {
         return redisTemplate.opsForValue().get(key);
+    }
+
+    @Override
+    public void multi() {
+        redisTemplate.multi();
+    }
+
+    @Override
+    public void exec() {
+        redisTemplate.exec();
     }
 }
