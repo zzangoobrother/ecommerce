@@ -2,6 +2,7 @@ package com.example.application;
 
 import com.example.RabbitmqClient;
 import com.example.annotation.DistributedLock;
+import com.example.annotation.RedisTransaction;
 import com.example.application.dto.PaymentCancelDto;
 import com.example.application.dto.PaymentDto;
 import com.example.application.dto.ProductDecreaseDto;
@@ -135,6 +136,7 @@ public class OrderService {
         return null;
     }
 
+    @RedisTransaction
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public String orderByRabbitmq(Long productId, int quantity, Long memberId) {
         // 상품 재고 확인
@@ -175,6 +177,7 @@ public class OrderService {
         } catch (RuntimeException e) {
             PaymentCancelDto paymentCancelDto = new PaymentCancelDto(orderCode);
             rabbitmqClient.send(exchangeName, routingPaymentCancelKey, paymentCancelDto);
+            redisCountRepository.increment("product-" + productId, (long) quantity);
         }
 
         return null;
