@@ -13,9 +13,9 @@ import com.example.client.dto.request.ProductDecreaseRequest;
 import com.example.client.dto.response.ProductResponse;
 import com.example.model.Order;
 import com.example.model.OrderDetail;
-import com.example.repository.OrderDetailRepository;
-import com.example.repository.OrderRepository;
-import com.example.repository.RedisCountRepository;
+import com.example.repository.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 public class OrderService {
@@ -41,15 +42,19 @@ public class OrderService {
     private final ProductClient productClient;
     private final PaymentClient paymentClient;
     private final RabbitmqClient rabbitmqClient;
+    private final RedisRepository redisRepository;
     private final RedisCountRepository redisCountRepository;
+    private final RedisSetRepository redisSetRepository;
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
 
-    public OrderService(ProductClient productClient, PaymentClient paymentClient, RabbitmqClient rabbitmqClient, RedisCountRepository redisCountRepository, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository) {
+    public OrderService(ProductClient productClient, PaymentClient paymentClient, RabbitmqClient rabbitmqClient, RedisRepository redisRepository, RedisCountRepository redisCountRepository, RedisSetRepository redisSetRepository, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository) {
         this.productClient = productClient;
         this.paymentClient = paymentClient;
         this.rabbitmqClient = rabbitmqClient;
+        this.redisRepository = redisRepository;
         this.redisCountRepository = redisCountRepository;
+        this.redisSetRepository = redisSetRepository;
         this.orderRepository = orderRepository;
         this.orderDetailRepository = orderDetailRepository;
     }
@@ -138,17 +143,36 @@ public class OrderService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public String orderByRabbitmq(Long productId, int quantity, Long memberId) {
         // 상품 재고 확인
-        Long decrementQuantity = redisCountRepository.decrement("product-" + productId, (long) quantity);
-        if (decrementQuantity - quantity < 0) {
+        int decrementQuantity;
+        BigDecimal price;
+
+        String o = redisRepository.get("product-" + productId);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            ProductResponse productResponse = mapper.readValue(o, ProductResponse.class);
+            if (Objects.isNull(productResponse)) {
+                System.out.println("db");
+                productResponse = productClient.getBy(productId);
+            }
+
+            decrementQuantity = productResponse.quantity();
+            price = productResponse.price();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        Long size = redisSetRepository.size("order-" + productId);
+
+        if (decrementQuantity - quantity <= size) {
             throw new IllegalStateException("재고 수량이 부족합니다.");
         }
 
-        ProductResponse productResponse = productClient.getBy(productId);
         String orderCode = OrderCodeSequence.create(LocalDateTime.now());
+        redisSetRepository.add("order-" + productId, orderCode);
 
         try {
             // 결제하기
-            BigDecimal totalPrice = productResponse.price().multiply(BigDecimal.valueOf(quantity));
+            BigDecimal totalPrice = price.multiply(BigDecimal.valueOf(quantity));
             PaymentDto paymentDto = new PaymentDto(orderCode, totalPrice);
             rabbitmqClient.send(exchangeName, routingPaymentKey, paymentDto);
 

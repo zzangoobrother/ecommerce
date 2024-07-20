@@ -11,6 +11,8 @@ dependencies {
     implementation(project(':support:feign'))
     implementation(project(':support:rabbitmq'))
 
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.4'
+
     compileOnly 'org.springframework:spring-tx'
 
     compileOnly("org.springframework:spring-context")

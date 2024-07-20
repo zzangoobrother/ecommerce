@@ -9,8 +9,4 @@ public interface RedisCountRepository {
     Long increment(String key, Long value);
 
     Long get(String key);
-
-    void multi();
-
-    void exec();
 }

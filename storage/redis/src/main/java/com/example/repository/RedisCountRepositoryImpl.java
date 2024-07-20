@@ -31,14 +31,4 @@ public class RedisCountRepositoryImpl implements RedisCountRepository {
     public Long get(String key) {
         return redisTemplate.opsForValue().get(key);
     }
-
-    @Override
-    public void multi() {
-        redisTemplate.multi();
-    }
-
-    @Override
-    public void exec() {
-        redisTemplate.exec();
-    }
 }
