@@ -183,6 +183,10 @@ public class OrderService {
                     .build();
             Order createOrder = orderRepository.save(order);
 
+            if (true) {
+                throw new RuntimeException("");
+            }
+
             OrderDetail orderDetail = OrderDetail.builder()
                     .ordersId(createOrder.getId())
                     .productId(productId)
@@ -199,7 +203,7 @@ public class OrderService {
         } catch (RuntimeException e) {
             PaymentCancelDto paymentCancelDto = new PaymentCancelDto(orderCode);
             rabbitmqClient.send(exchangeName, routingPaymentCancelKey, paymentCancelDto);
-            redisCountRepository.increment("product-" + productId, (long) quantity);
+            redisSetRepository.remove("order-" + productId, orderCode);
         }
 
         return null;

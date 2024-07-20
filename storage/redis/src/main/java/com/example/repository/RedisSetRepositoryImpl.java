@@ -21,4 +21,9 @@ public class RedisSetRepositoryImpl implements RedisSetRepository {
     public Long size(String key) {
         return redisTemplate.opsForSet().size(key);
     }
+
+    @Override
+    public void remove(String key, String value) {
+        redisTemplate.opsForSet().remove(key, value);
+    }
 }
