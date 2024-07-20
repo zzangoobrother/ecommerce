@@ -6,5 +6,5 @@ public interface RedisRepository {
 
     void add(String key, String value);
 
-    Object get(String key);
+    String get(String key);
 }
