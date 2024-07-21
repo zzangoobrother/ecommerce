@@ -5,6 +5,7 @@ import com.example.annotation.DistributedLock;
 import com.example.application.dto.PaymentCancelDto;
 import com.example.application.dto.PaymentDto;
 import com.example.application.dto.ProductDecreaseDto;
+import com.example.application.event.OrderEvent;
 import com.example.client.PaymentClient;
 import com.example.client.ProductClient;
 import com.example.client.dto.request.PaymentCancelRequest;
@@ -13,10 +14,14 @@ import com.example.client.dto.request.ProductDecreaseRequest;
 import com.example.client.dto.response.ProductResponse;
 import com.example.model.Order;
 import com.example.model.OrderDetail;
-import com.example.repository.*;
+import com.example.repository.OrderDetailRepository;
+import com.example.repository.OrderRepository;
+import com.example.repository.RedisRepository;
+import com.example.repository.RedisSetRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,33 +35,27 @@ public class OrderService {
     @Value("${rabbitmq.exchange.name}")
     private String exchangeName;
 
-    @Value("${rabbitmq.routing.payment.key}")
-    private String routingPaymentKey;
-
     @Value("${rabbitmq.routing.payment.cancel.key}")
     private String routingPaymentCancelKey;
-
-    @Value("${rabbitmq.routing.product.decrease.key}")
-    private String routingProductDecreaseKey;
 
     private final ProductClient productClient;
     private final PaymentClient paymentClient;
     private final RabbitmqClient rabbitmqClient;
     private final RedisRepository redisRepository;
-    private final RedisCountRepository redisCountRepository;
     private final RedisSetRepository redisSetRepository;
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
+    private final ApplicationEventPublisher publisher;
 
-    public OrderService(ProductClient productClient, PaymentClient paymentClient, RabbitmqClient rabbitmqClient, RedisRepository redisRepository, RedisCountRepository redisCountRepository, RedisSetRepository redisSetRepository, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository) {
+    public OrderService(ProductClient productClient, PaymentClient paymentClient, RabbitmqClient rabbitmqClient, RedisRepository redisRepository, RedisSetRepository redisSetRepository, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository, ApplicationEventPublisher publisher) {
         this.productClient = productClient;
         this.paymentClient = paymentClient;
         this.rabbitmqClient = rabbitmqClient;
         this.redisRepository = redisRepository;
-        this.redisCountRepository = redisCountRepository;
         this.redisSetRepository = redisSetRepository;
         this.orderRepository = orderRepository;
         this.orderDetailRepository = orderDetailRepository;
+        this.publisher = publisher;
     }
 
     @Transactional
@@ -151,7 +150,6 @@ public class OrderService {
         try {
             ProductResponse productResponse = mapper.readValue(o, ProductResponse.class);
             if (Objects.isNull(productResponse)) {
-                System.out.println("db");
                 productResponse = productClient.getBy(productId);
             }
 
@@ -173,8 +171,6 @@ public class OrderService {
         try {
             // 결제하기
             BigDecimal totalPrice = price.multiply(BigDecimal.valueOf(quantity));
-            PaymentDto paymentDto = new PaymentDto(orderCode, totalPrice);
-            rabbitmqClient.send(exchangeName, routingPaymentKey, paymentDto);
 
             // 주문서 생성
             Order order = Order.builder()
@@ -182,10 +178,6 @@ public class OrderService {
                     .ordersCode(orderCode)
                     .build();
             Order createOrder = orderRepository.save(order);
-
-            if (true) {
-                throw new RuntimeException("");
-            }
 
             OrderDetail orderDetail = OrderDetail.builder()
                     .ordersId(createOrder.getId())
@@ -196,8 +188,10 @@ public class OrderService {
                     .build();
             orderDetailRepository.save(orderDetail);
 
+            PaymentDto paymentDto = new PaymentDto(orderCode, totalPrice);
             ProductDecreaseDto productDecreaseDto = new ProductDecreaseDto(productId, quantity);
-            rabbitmqClient.send(exchangeName, routingProductDecreaseKey, productDecreaseDto);
+
+            publisher.publishEvent(new OrderEvent(paymentDto, productDecreaseDto));
 
             return order.getOrdersCode();
         } catch (RuntimeException e) {
