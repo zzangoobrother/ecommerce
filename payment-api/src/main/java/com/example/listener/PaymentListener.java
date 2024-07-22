@@ -16,8 +16,8 @@ public class PaymentListener {
     }
 
     @RabbitListener(queues = "${rabbitmq.queue.payment.name}")
-    public void paymentListener(PaymentDto paymentDto) {
-        paymentService.payment(paymentDto.orderCode(), paymentDto.totalPrice());
+    public void paymentListener(String orderCode) {
+        paymentService.payment(orderCode);
     }
 
     @RabbitListener(queues = "${rabbitmq.queue.payment.cancel.name}")

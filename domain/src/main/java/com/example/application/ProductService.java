@@ -1,6 +1,8 @@
 package com.example.application;
 
 import com.example.application.dto.ProductDomainResponse;
+import com.example.client.OrderClient;
+import com.example.client.dto.response.OrderResponse;
 import com.example.model.Product;
 import com.example.repository.ProductRepository;
 import com.example.repository.RedisCountRepository;
@@ -18,11 +20,13 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final RedisCountRepository redisCountRepository;
     private final RedisRepository redisRepository;
+    private final OrderClient orderClient;
 
-    public ProductService(ProductRepository productRepository, RedisCountRepository redisCountRepository, RedisRepository redisRepository) {
+    public ProductService(ProductRepository productRepository, RedisCountRepository redisCountRepository, RedisRepository redisRepository, OrderClient orderClient) {
         this.productRepository = productRepository;
         this.redisCountRepository = redisCountRepository;
         this.redisRepository = redisRepository;
+        this.orderClient = orderClient;
     }
 
     public Long create(String name, BigDecimal price, int quantity) {
@@ -72,6 +76,14 @@ public class ProductService {
     public void decrease(Long productId, int quantity) {
         Product product = productRepository.getBy(productId);
         product.deducted(quantity);
+
+        productRepository.save(product);
+    }
+
+    public void decrease(String orderCode) {
+        OrderResponse orderResponse = orderClient.getBy(orderCode);
+        Product product = productRepository.getBy(orderResponse.productId());
+        product.deducted(orderResponse.quantity());
 
         productRepository.save(product);
     }
