@@ -28,7 +28,7 @@ public class OrderEventListener {
     @TransactionalEventListener
     public void orderMessage(OrderEvent orderEvent) {
         System.out.println("event listener");
-        rabbitmqClient.send(exchangeName, routingPaymentKey, orderEvent.getPaymentDto());
-        rabbitmqClient.send(exchangeName, routingProductDecreaseKey, orderEvent.getProductDecreaseDto());
+        rabbitmqClient.send(exchangeName, routingPaymentKey, orderEvent.getOrderCode());
+        rabbitmqClient.send(exchangeName, routingProductDecreaseKey, orderEvent.getOrderCode());
     }
 }

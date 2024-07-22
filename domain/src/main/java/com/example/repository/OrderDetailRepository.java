@@ -4,4 +4,6 @@ import com.example.model.OrderDetail;
 
 public interface OrderDetailRepository {
     OrderDetail save(OrderDetail orderDetail);
+
+    OrderDetail getBy(Long orderId);
 }

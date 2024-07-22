@@ -1,7 +1,6 @@
 package com.example.listener;
 
 import com.example.application.ProductService;
-import com.example.listener.dto.ProductDecreaseRequest;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +14,7 @@ public class ProductListener {
     }
 
     @RabbitListener(queues = "${rabbitmq.queue.product.decrease.name}")
-    public void decrease(ProductDecreaseRequest request) {
-        productService.decrease(request.productId(), request.quantity());
+    public void decrease(String orderCode) {
+        productService.decrease(orderCode);
     }
 }

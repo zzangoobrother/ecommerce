@@ -2,9 +2,8 @@ package com.example.application;
 
 import com.example.RabbitmqClient;
 import com.example.annotation.DistributedLock;
+import com.example.application.dto.OrderDto;
 import com.example.application.dto.PaymentCancelDto;
-import com.example.application.dto.PaymentDto;
-import com.example.application.dto.ProductDecreaseDto;
 import com.example.application.event.OrderEvent;
 import com.example.client.PaymentClient;
 import com.example.client.ProductClient;
@@ -188,10 +187,7 @@ public class OrderService {
                     .build();
             orderDetailRepository.save(orderDetail);
 
-            PaymentDto paymentDto = new PaymentDto(orderCode, totalPrice);
-            ProductDecreaseDto productDecreaseDto = new ProductDecreaseDto(productId, quantity);
-
-            publisher.publishEvent(new OrderEvent(paymentDto, productDecreaseDto));
+            publisher.publishEvent(new OrderEvent(orderCode));
 
             return order.getOrdersCode();
         } catch (RuntimeException e) {
@@ -201,5 +197,12 @@ public class OrderService {
         }
 
         return null;
+    }
+
+    public OrderDto getBy(String orderCode) {
+        Order order = orderRepository.getBy(orderCode);
+        OrderDetail orderDetail = orderDetailRepository.getBy(order.getId());
+
+        return new OrderDto(orderDetail.getProductId(), orderDetail.getQuantity(), orderDetail.getPrice());
     }
 }

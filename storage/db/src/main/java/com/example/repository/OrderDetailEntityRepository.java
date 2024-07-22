@@ -17,4 +17,11 @@ class OrderDetailEntityRepository implements OrderDetailRepository {
     public OrderDetail save(OrderDetail orderDetail) {
         return orderDetailJpaRepository.save(OrderDetailEntity.toOrderDetailEntity(orderDetail)).toOrderDetail();
     }
+
+    @Override
+    public OrderDetail getBy(Long orderId) {
+        return orderDetailJpaRepository.findByOrdersId(orderId).orElseThrow(
+                () -> new IllegalArgumentException("해당 주문서를 찾을 수 없습니다.")
+        ).toOrderDetail();
+    }
 }
