@@ -5,10 +5,6 @@ import com.example.client.OrderClient;
 import com.example.client.dto.response.OrderResponse;
 import com.example.model.Product;
 import com.example.repository.ProductRepository;
-import com.example.repository.RedisCountRepository;
-import com.example.repository.RedisRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,14 +14,10 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final RedisCountRepository redisCountRepository;
-    private final RedisRepository redisRepository;
     private final OrderClient orderClient;
 
-    public ProductService(ProductRepository productRepository, RedisCountRepository redisCountRepository, RedisRepository redisRepository, OrderClient orderClient) {
+    public ProductService(ProductRepository productRepository, OrderClient orderClient) {
         this.productRepository = productRepository;
-        this.redisCountRepository = redisCountRepository;
-        this.redisRepository = redisRepository;
         this.orderClient = orderClient;
     }
 
@@ -41,16 +33,6 @@ public class ProductService {
                 .build();
         Product saveProduct = productRepository.save(product);
 
-//        redisCountRepository.add("product-" + saveProduct.getId(), (long) quantity);
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            String s = mapper.writeValueAsString(ProductDomainResponse.toProductDomainResponse(product));
-            redisRepository.add("product-" + saveProduct.getId(), s);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
         return saveProduct.getId();
     }
 
@@ -62,15 +44,7 @@ public class ProductService {
 
     public ProductDomainResponse getBy(Long productId) {
         Product product = productRepository.getBy(productId);
-        ProductDomainResponse productDomainResponse = ProductDomainResponse.toProductDomainResponse(product);
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            redisRepository.add("product-" + product.getId(), mapper.writeValueAsString(productDomainResponse));
-            return productDomainResponse;
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        return ProductDomainResponse.toProductDomainResponse(product);
     }
 
     public void decrease(Long productId, int quantity) {

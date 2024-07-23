@@ -17,8 +17,6 @@ import com.example.repository.OrderDetailRepository;
 import com.example.repository.OrderRepository;
 import com.example.repository.RedisRepository;
 import com.example.repository.RedisSetRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -27,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Service
 public class OrderService {
@@ -141,25 +138,11 @@ public class OrderService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public String orderByRabbitmq(Long productId, int quantity, Long memberId) {
         // 상품 재고 확인
-        int decrementQuantity;
-        BigDecimal price;
-
-        String o = redisRepository.get("product-" + productId);
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            ProductResponse productResponse = mapper.readValue(o, ProductResponse.class);
-            if (Objects.isNull(productResponse)) {
-                productResponse = productClient.getBy(productId);
-            }
-
-            decrementQuantity = productResponse.quantity();
-            price = productResponse.price();
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        ProductResponse productResponse = productClient.getBy(productId);
 
         Long size = redisSetRepository.size("order-" + productId);
 
+        int decrementQuantity = productResponse.quantity();
         if (decrementQuantity - quantity <= size) {
             throw new IllegalStateException("재고 수량이 부족합니다.");
         }
@@ -168,7 +151,7 @@ public class OrderService {
         redisSetRepository.add("order-" + productId, orderCode);
 
         try {
-            // 결제하기
+            BigDecimal price = productResponse.price();
             BigDecimal totalPrice = price.multiply(BigDecimal.valueOf(quantity));
 
             // 주문서 생성
