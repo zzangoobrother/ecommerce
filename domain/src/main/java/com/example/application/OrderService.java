@@ -1,9 +1,7 @@
 package com.example.application;
 
-import com.example.RabbitmqClient;
 import com.example.annotation.DistributedLock;
 import com.example.application.dto.OrderDto;
-import com.example.application.dto.PaymentCancelDto;
 import com.example.application.event.OrderEvent;
 import com.example.client.PaymentClient;
 import com.example.client.ProductClient;
@@ -13,11 +11,11 @@ import com.example.client.dto.request.ProductDecreaseRequest;
 import com.example.client.dto.response.ProductResponse;
 import com.example.model.Order;
 import com.example.model.OrderDetail;
+import com.example.model.TemporaryOrder;
 import com.example.repository.OrderDetailRepository;
 import com.example.repository.OrderRepository;
-import com.example.repository.RedisRepository;
 import com.example.repository.RedisSetRepository;
-import org.springframework.beans.factory.annotation.Value;
+import com.example.repository.TemporaryOrderRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -28,27 +26,20 @@ import java.time.LocalDateTime;
 
 @Service
 public class OrderService {
-    @Value("${rabbitmq.exchange.name}")
-    private String exchangeName;
-
-    @Value("${rabbitmq.routing.payment.cancel.key}")
-    private String routingPaymentCancelKey;
 
     private final ProductClient productClient;
     private final PaymentClient paymentClient;
-    private final RabbitmqClient rabbitmqClient;
-    private final RedisRepository redisRepository;
     private final RedisSetRepository redisSetRepository;
+    private final TemporaryOrderRepository temporaryOrderRepository;
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
     private final ApplicationEventPublisher publisher;
 
-    public OrderService(ProductClient productClient, PaymentClient paymentClient, RabbitmqClient rabbitmqClient, RedisRepository redisRepository, RedisSetRepository redisSetRepository, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository, ApplicationEventPublisher publisher) {
+    public OrderService(ProductClient productClient, PaymentClient paymentClient, RedisSetRepository redisSetRepository, TemporaryOrderRepository temporaryOrderRepository, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository, ApplicationEventPublisher publisher) {
         this.productClient = productClient;
         this.paymentClient = paymentClient;
-        this.rabbitmqClient = rabbitmqClient;
-        this.redisRepository = redisRepository;
         this.redisSetRepository = redisSetRepository;
+        this.temporaryOrderRepository = temporaryOrderRepository;
         this.orderRepository = orderRepository;
         this.orderDetailRepository = orderDetailRepository;
         this.publisher = publisher;
@@ -150,36 +141,39 @@ public class OrderService {
         String orderCode = OrderCodeSequence.create(LocalDateTime.now());
         redisSetRepository.add("order-" + productId, orderCode);
 
-        try {
-            BigDecimal price = productResponse.price();
-            BigDecimal totalPrice = price.multiply(BigDecimal.valueOf(quantity));
+        BigDecimal price = productResponse.price();
+        BigDecimal totalPrice = price.multiply(BigDecimal.valueOf(quantity));
 
-            // 주문서 생성
-            Order order = Order.builder()
-                    .memberId(memberId)
-                    .ordersCode(orderCode)
-                    .build();
-            Order createOrder = orderRepository.save(order);
+        // 임시 주문서 생성
+        TemporaryOrder temporaryOrder = TemporaryOrder.builder()
+                .memberId(memberId)
+                .productId(productId)
+                .ordersCode(orderCode)
+                .quantity(quantity)
+                .price(totalPrice)
+                .build();
 
-            OrderDetail orderDetail = OrderDetail.builder()
-                    .ordersId(createOrder.getId())
-                    .productId(productId)
-                    .quantity(quantity)
-                    .price(totalPrice)
-                    .status(OrderDetail.OrderStatus.COMPLETE)
-                    .build();
-            orderDetailRepository.save(orderDetail);
+        temporaryOrderRepository.save(temporaryOrder);
 
-            publisher.publishEvent(new OrderEvent(orderCode));
+//        // 주문서 생성
+//        Order order = Order.builder()
+//                .memberId(memberId)
+//                .ordersCode(orderCode)
+//                .build();
+//        Order createOrder = orderRepository.save(order);
+//
+//        OrderDetail orderDetail = OrderDetail.builder()
+//                .ordersId(createOrder.getId())
+//                .productId(productId)
+//                .quantity(quantity)
+//                .price(totalPrice)
+//                .status(OrderDetail.OrderStatus.COMPLETE)
+//                .build();
+//        orderDetailRepository.save(orderDetail);
 
-            return order.getOrdersCode();
-        } catch (RuntimeException e) {
-            PaymentCancelDto paymentCancelDto = new PaymentCancelDto(orderCode);
-            rabbitmqClient.send(exchangeName, routingPaymentCancelKey, paymentCancelDto);
-            redisSetRepository.remove("order-" + productId, orderCode);
-        }
+        publisher.publishEvent(new OrderEvent(orderCode));
 
-        return null;
+        return orderCode;
     }
 
     public OrderDto getBy(String orderCode) {
