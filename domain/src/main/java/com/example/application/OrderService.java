@@ -11,11 +11,9 @@ import com.example.client.dto.request.ProductDecreaseRequest;
 import com.example.client.dto.response.ProductResponse;
 import com.example.model.Order;
 import com.example.model.OrderDetail;
-import com.example.model.TemporaryOrder;
 import com.example.repository.OrderDetailRepository;
 import com.example.repository.OrderRepository;
 import com.example.repository.RedisSetRepository;
-import com.example.repository.TemporaryOrderRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -30,16 +28,14 @@ public class OrderService {
     private final ProductClient productClient;
     private final PaymentClient paymentClient;
     private final RedisSetRepository redisSetRepository;
-    private final TemporaryOrderRepository temporaryOrderRepository;
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
     private final ApplicationEventPublisher publisher;
 
-    public OrderService(ProductClient productClient, PaymentClient paymentClient, RedisSetRepository redisSetRepository, TemporaryOrderRepository temporaryOrderRepository, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository, ApplicationEventPublisher publisher) {
+    public OrderService(ProductClient productClient, PaymentClient paymentClient, RedisSetRepository redisSetRepository, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository, ApplicationEventPublisher publisher) {
         this.productClient = productClient;
         this.paymentClient = paymentClient;
         this.redisSetRepository = redisSetRepository;
-        this.temporaryOrderRepository = temporaryOrderRepository;
         this.orderRepository = orderRepository;
         this.orderDetailRepository = orderDetailRepository;
         this.publisher = publisher;
@@ -134,7 +130,7 @@ public class OrderService {
         Long size = redisSetRepository.size("order-" + productId);
 
         int decrementQuantity = productResponse.quantity();
-        if (decrementQuantity - quantity <= size) {
+        if (decrementQuantity - quantity < size) {
             throw new IllegalStateException("재고 수량이 부족합니다.");
         }
 
@@ -144,32 +140,21 @@ public class OrderService {
         BigDecimal price = productResponse.price();
         BigDecimal totalPrice = price.multiply(BigDecimal.valueOf(quantity));
 
-        // 임시 주문서 생성
-        TemporaryOrder temporaryOrder = TemporaryOrder.builder()
+        // 주문서 생성
+        Order order = Order.builder()
                 .memberId(memberId)
-                .productId(productId)
                 .ordersCode(orderCode)
+                .build();
+        Order createOrder = orderRepository.save(order);
+
+        OrderDetail orderDetail = OrderDetail.builder()
+                .ordersId(createOrder.getId())
+                .productId(productId)
                 .quantity(quantity)
                 .price(totalPrice)
+                .status(OrderDetail.OrderStatus.COMPLETE)
                 .build();
-
-        temporaryOrderRepository.save(temporaryOrder);
-
-//        // 주문서 생성
-//        Order order = Order.builder()
-//                .memberId(memberId)
-//                .ordersCode(orderCode)
-//                .build();
-//        Order createOrder = orderRepository.save(order);
-//
-//        OrderDetail orderDetail = OrderDetail.builder()
-//                .ordersId(createOrder.getId())
-//                .productId(productId)
-//                .quantity(quantity)
-//                .price(totalPrice)
-//                .status(OrderDetail.OrderStatus.COMPLETE)
-//                .build();
-//        orderDetailRepository.save(orderDetail);
+        orderDetailRepository.save(orderDetail);
 
         publisher.publishEvent(new OrderEvent(orderCode));
 
