@@ -9,7 +9,6 @@ rootProject.name = 'ecommerce'
 
 include(
         "domain",
-        "domain:payment",
         "ecommerce-api",
         "product-api",
         "payment-api",
