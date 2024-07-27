@@ -6,4 +6,6 @@ public interface RedisSetRepository {
     Long size(String key);
 
     void remove(String key, String value);
+
+    String validQuantity(String key, String value, int quantity);
 }

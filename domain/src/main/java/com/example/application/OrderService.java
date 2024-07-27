@@ -127,15 +127,13 @@ public class OrderService {
         // 상품 재고 확인
         ProductResponse productResponse = productClient.getBy(productId);
 
-        Long size = redisSetRepository.size("order-" + productId);
-
+        String orderCode = OrderCodeSequence.create(LocalDateTime.now());
         int decrementQuantity = productResponse.quantity();
-        if (decrementQuantity - quantity < size) {
+        String code = redisSetRepository.validQuantity("order-" + productId, orderCode, decrementQuantity);
+
+        if (code.equals("3")) {
             throw new IllegalStateException("재고 수량이 부족합니다.");
         }
-
-        String orderCode = OrderCodeSequence.create(LocalDateTime.now());
-        redisSetRepository.add("order-" + productId, orderCode);
 
         BigDecimal price = productResponse.price();
         BigDecimal totalPrice = price.multiply(BigDecimal.valueOf(quantity));
