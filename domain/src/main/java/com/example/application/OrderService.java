@@ -2,7 +2,7 @@ package com.example.application;
 
 import com.example.annotation.DistributedLock;
 import com.example.application.dto.OrderDto;
-import com.example.application.event.OrderEvent;
+import com.example.application.event.OrderEventDto;
 import com.example.client.PaymentClient;
 import com.example.client.ProductClient;
 import com.example.client.dto.request.PaymentCancelRequest;
@@ -154,7 +154,7 @@ public class OrderService {
                 .build();
         orderDetailRepository.save(orderDetail);
 
-        publisher.publishEvent(new OrderEvent(orderCode));
+        publisher.publishEvent(new OrderEventDto(orderCode));
 
         return orderCode;
     }
