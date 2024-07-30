@@ -1,34 +1,23 @@
 package com.example.application.listener;
 
-import com.example.RabbitmqClient;
-import com.example.application.event.OrderEvent;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
+import com.example.application.event.OrderEventDto;
+import com.example.model.OrderEvent;
+import com.example.model.OrderEventStatus;
+import com.example.repository.OrderEventRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 public class OrderEventListener {
-    @Value("${rabbitmq.exchange.name}")
-    private String exchangeName;
+    private final OrderEventRepository orderEventRepository;
 
-    @Value("${rabbitmq.routing.payment.key}")
-    private String routingPaymentKey;
-
-    @Value("${rabbitmq.routing.product.decrease.key}")
-    private String routingProductDecreaseKey;
-
-    private final RabbitmqClient rabbitmqClient;
-
-    public OrderEventListener(RabbitmqClient rabbitmqClient) {
-        this.rabbitmqClient = rabbitmqClient;
+    public OrderEventListener(OrderEventRepository orderEventRepository) {
+        this.orderEventRepository = orderEventRepository;
     }
 
-    @Async
-    @TransactionalEventListener
-    public void orderMessage(OrderEvent orderEvent) {
-        System.out.println("event listener");
-        rabbitmqClient.send(exchangeName, routingPaymentKey, orderEvent.getOrderCode());
-        rabbitmqClient.send(exchangeName, routingProductDecreaseKey, orderEvent.getOrderCode());
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
+    public void orderMessage(OrderEventDto orderEventDto) {
+        orderEventRepository.save(OrderEvent.builder().ordersCode(orderEventDto.getOrderCode()).status(OrderEventStatus.INIT).build());
     }
 }
