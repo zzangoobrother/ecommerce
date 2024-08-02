@@ -21,4 +21,8 @@ public class OrderEvent {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+    public void success() {
+        this.status = OrderEventStatus.SEND_SUCCESS;
+    }
 }
