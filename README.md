@@ -15,4 +15,5 @@ Java, Spring Boot, Spring Data JPA, Spring Cloud Gateway, MySql, Redis, Rabbitmq
 ### ERD
 <img src="../ecommerce/images/ecommerce_erd.png" width="650" height="400">
 
-
+### Sequence Diagram
+<img src="../ecommerce/images/sequence_diagram.png" width="650" height="400">
