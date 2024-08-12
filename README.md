@@ -17,3 +17,12 @@ Java, Spring Boot, Spring Data JPA, Spring Cloud Gateway, MySql, Redis, Rabbitmq
 
 ### Sequence Diagram
 <img src="../ecommerce/images/sequence_diagram.png" width="650" height="400">
+
+### 아키텍쳐
+- 전체 서버 아키텍쳐
+<img src="../ecommerce/images/이커머스_상품주문하기-전체 서버 아키텍쳐.png" width="650" height="400">
+
+- 주문하기 아키텍쳐
+<img src="../ecommerce/images/이커머스_상품주문하기-주문 서버 아키텍쳐.png" width="650" height="400">
+
+
