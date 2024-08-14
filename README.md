@@ -25,4 +25,8 @@ Java, Spring Boot, Spring Data JPA, Spring Cloud Gateway, MySql, Redis, Rabbitmq
 - 주문하기 아키텍쳐
 <img src="./images/이커머스_상품주문하기-주문 서버 아키텍쳐.png" width="650" height="400">
 
+### 개발 일대기
 
+- [#1 이커머스 주문 하기 성능 개선기, 프로젝트 소개](https://github.com/zzangoobrother/study-organization/blob/main/project/ecommerce/1.%20%EC%9D%B4%EC%BB%A4%EB%A8%B8%EC%8A%A4%20%EC%A3%BC%EB%AC%B8%20%ED%95%98%EA%B8%B0%20%EC%84%B1%EB%8A%A5%20%EA%B0%9C%EC%84%A0%EA%B8%B0%2C%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%20%EC%86%8C%EA%B0%9C.md)
+- [#2 이커머스 주문 하기 성능 개선기, 데이터 정합성](https://github.com/zzangoobrother/study-organization/blob/main/project/ecommerce/2.%20%EC%9D%B4%EC%BB%A4%EB%A8%B8%EC%8A%A4%20%EC%A3%BC%EB%AC%B8%20%ED%95%98%EA%B8%B0%20%EC%84%B1%EB%8A%A5%20%EA%B0%9C%EC%84%A0%EA%B8%B0%2C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%A0%95%ED%95%A9%EC%84%B1.md)
+- [#3 이커머스 주문 하기 성능 개선기, 동시성 처리](https://github.com/zzangoobrother/study-organization/blob/main/project/ecommerce/3.%20%EC%9D%B4%EC%BB%A4%EB%A8%B8%EC%8A%A4%20%EC%A3%BC%EB%AC%B8%20%ED%95%98%EA%B8%B0%20%EC%84%B1%EB%8A%A5%20%EA%B0%9C%EC%84%A0%EA%B8%B0%2C%20%EB%8F%99%EC%8B%9C%EC%84%B1%20%EC%B2%98%EB%A6%AC.md)
