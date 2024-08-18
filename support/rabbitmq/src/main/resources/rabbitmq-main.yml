@@ -40,7 +40,7 @@ spring:
       on-profile: prod
 
   rabbitmq:
-    host: localhost
+    host: rabbitmq-test
     port: 5672
     username: admin
     password: admin
