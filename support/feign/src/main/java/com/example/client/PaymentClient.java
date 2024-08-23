@@ -1,5 +1,6 @@
 package com.example.client;
 
+import com.example.client.dto.request.PaymentCancelRequest;
 import com.example.client.dto.request.PaymentRequest;
 import com.example.client.dto.response.ProductResponse;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -12,4 +13,7 @@ public interface PaymentClient {
 
     @PostMapping(value = "/payments", consumes = MediaType.APPLICATION_JSON_VALUE)
     ProductResponse payment(@RequestBody PaymentRequest request);
+
+    @PostMapping(value = "/payments/cancel", consumes = MediaType.APPLICATION_JSON_VALUE)
+    ProductResponse cancel(@RequestBody PaymentCancelRequest request);
 }

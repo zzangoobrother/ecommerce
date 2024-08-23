@@ -1,0 +1,70 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+
+rabbitmq:
+  exchange:
+    name: product-exchange
+  queue:
+    product:
+      decrease:
+        name: product-decrease-queue
+
+    payment:
+      name: payment-queue
+
+      cancel:
+        name: payment-cancel-queue
+
+  routing:
+    product:
+      decrease:
+        key: product-decrease-key
+
+    payment:
+      key: payment-key
+      cancel:
+        key: payment-cancel-key
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  rabbitmq:
+    host: rabbitmq-test
+    port: 5672
+    username: admin
+    password: admin
+
+rabbitmq:
+  exchange:
+    name: product-exchange
+  queue:
+    product:
+      decrease:
+        name: product-decrease-queue
+
+    payment:
+      name: payment-queue
+
+      cancel:
+        name: payment-cancel-queue
+
+  routing:
+    product:
+      decrease:
+        key: product-decrease-key
+
+    payment:
+      key: payment-key
+      cancel:
+        key: payment-cancel-key

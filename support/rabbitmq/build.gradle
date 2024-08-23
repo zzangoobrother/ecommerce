@@ -1,0 +1,15 @@
+tasks.getByName("bootJar") {
+    enabled = false
+}
+
+tasks.getByName("jar") {
+    enabled = true
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+
+    compileOnly 'org.springframework:spring-context'
+}
+
+tasks.register("prepareKotlinBuildScriptModel") {}

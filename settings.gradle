@@ -14,8 +14,10 @@ include(
         "payment-api",
         "order-api",
         "member-api",
+        "message-relay",
         "storage:db",
         "storage:redis",
         "support:feign",
+        "support:rabbitmq",
         "gateway"
 )

@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class PaymentEntity extends BaseTimeEntity {
 
     @Id
-    @Column(name = "orders_id")
+    @Column(name = "payment_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -27,11 +27,17 @@ public class PaymentEntity extends BaseTimeEntity {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private Payment.Status status;
+
     @Builder
-    public PaymentEntity(Long id, String ordersCode, BigDecimal price, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public PaymentEntity(Long id, String ordersCode, BigDecimal price, Payment.Status status, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.ordersCode = ordersCode;
         this.price = price;
+        this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -41,6 +47,7 @@ public class PaymentEntity extends BaseTimeEntity {
                 .id(payment.getId())
                 .ordersCode(payment.getOrdersCode())
                 .price(payment.getPrice())
+                .status(payment.getStatus())
                 .createdAt(payment.getCreatedAt())
                 .updatedAt(payment.getUpdatedAt())
                 .build();
@@ -51,6 +58,7 @@ public class PaymentEntity extends BaseTimeEntity {
                 .id(getId())
                 .ordersCode(getOrdersCode())
                 .price(getPrice())
+                .status(getStatus())
                 .createdAt(getCreatedAt())
                 .updatedAt(getUpdatedAt())
                 .build();

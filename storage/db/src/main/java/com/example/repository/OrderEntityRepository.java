@@ -17,4 +17,11 @@ class OrderEntityRepository implements OrderRepository {
     public Order save(Order order) {
         return orderJpaRepository.save(OrderEntity.toOrderEntity(order)).toOrder();
     }
+
+    @Override
+    public Order getBy(String orderCode) {
+        return orderJpaRepository.findByOrdersCode(orderCode).orElseThrow(
+                () -> new IllegalArgumentException("해당 주문서를 찾을 수 없습니다.")
+        ).toOrder();
+    }
 }

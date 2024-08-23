@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    default: local
+
+  config:
+    import:
+      - db.yml
+      - rabbitmq-main.yml
+      - redis.yml
+      - feign-main.yml
+
+server:
+  port: 8088

@@ -11,6 +11,10 @@ payment:
   api:
     url: http://localhost:8087
 
+order:
+  api:
+    url: http://localhost:8086
+
 ---
 spring:
   config:
@@ -24,3 +28,7 @@ product:
 payment:
   api:
     url: http://payment-api:8087
+
+order:
+  api:
+    url: http://order-api:8086
