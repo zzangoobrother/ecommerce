@@ -23,8 +23,7 @@ public class OrderController {
     public String order(@RequestBody OrderRequest request, @AuthMember Long memberId) {
 //        return orderService.order(request.productId(), request.quantity(), memberId);
 
-//        return orderService.orderByRedisLock(request.productId(), request.quantity(), memberId);
-        return orderService.orderByRabbitmq(request.productId(), request.quantity(), memberId);
+        return orderService.orderByRedisLock(request.productId(), request.quantity(), memberId);
     }
 
     @GetMapping
