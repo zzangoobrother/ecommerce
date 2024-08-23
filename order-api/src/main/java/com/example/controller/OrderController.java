@@ -24,8 +24,6 @@ public class OrderController {
 //        return orderService.order(request.productId(), request.quantity(), memberId);
 
         return orderService.orderByRedisLock(request.productId(), request.quantity(), memberId);
-//        return orderService.orderByRedisLock(request.productId(), request.quantity(), memberId);
-        return orderService.orderByRabbitmq(request.productId(), request.quantity(), memberId);
     }
 
     @GetMapping
