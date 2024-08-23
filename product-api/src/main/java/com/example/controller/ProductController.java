@@ -43,7 +43,7 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
-    public ProductResponse getBy(@PathVariable("productId") Long productId) {
+    public ProductResponse getBy(@PathVariable Long productId) {
         return ProductResponse.toProductResponse(productService.getBy(productId));
     }
 
