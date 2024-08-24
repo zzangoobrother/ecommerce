@@ -8,10 +8,6 @@ spring:
       host: localhost
       port: 6379
 
-    redis2:
-      host: localhost
-      port: 6380
-
   session:
     store-type: redis
 
@@ -30,10 +26,6 @@ spring:
     redis:
       host: redis_test
       port: 6379
-
-    redis2:
-      host: 172.30.1.
-      port: 6380
 
   session:
     store-type: redis

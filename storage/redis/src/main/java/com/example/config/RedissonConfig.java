@@ -10,9 +10,9 @@ import org.springframework.context.annotation.Configuration;
 public class RedissonConfig {
     private static final String REDISSON_HOST_PREFIX = "redis://";
 
-    private final RedisProperties2 redisProperties;
+    private final RedisProperties redisProperties;
 
-    public RedissonConfig(RedisProperties2 redisProperties) {
+    public RedissonConfig(RedisProperties redisProperties) {
         this.redisProperties = redisProperties;
     }
 

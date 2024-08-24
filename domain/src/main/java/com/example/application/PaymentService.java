@@ -5,6 +5,7 @@ import com.example.client.dto.response.OrderResponse;
 import com.example.model.Payment;
 import com.example.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -27,6 +28,7 @@ public class PaymentService {
                 .build());
     }
 
+    @Transactional
     public void payment(String orderCode) {
         OrderResponse orderResponse = orderClient.getBy(orderCode);
 
