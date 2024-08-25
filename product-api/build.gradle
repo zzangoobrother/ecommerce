@@ -9,6 +9,7 @@ tasks.getByName("jar") {
 dependencies {
     implementation(project(":domain"))
     implementation(project(':storage:redis'))
+    implementation(project(':support:rabbitmq'))
 
     runtimeOnly(project(':storage:db'))
 

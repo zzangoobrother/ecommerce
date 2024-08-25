@@ -38,7 +38,6 @@ public class PaymentListener {
             paymentService.payment(orderEventDto.getOrderCode());
         } catch (RuntimeException e) {
             orderEventDto.increasedCount();
-
             log.info("결제 실패 count : {}", orderEventDto.getCount());
 
             rabbitmqClient.send(exchangeName, routingPaymentKey, orderEventDto);
