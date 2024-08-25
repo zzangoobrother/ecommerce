@@ -6,6 +6,7 @@ import com.example.client.dto.response.OrderResponse;
 import com.example.model.Product;
 import com.example.repository.ProductRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -54,6 +55,7 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    @Transactional
     public void decrease(String orderCode) {
         OrderResponse orderResponse = orderClient.getBy(orderCode);
         Product product = productRepository.getBy(orderResponse.productId());

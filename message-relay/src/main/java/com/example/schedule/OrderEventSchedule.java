@@ -44,7 +44,7 @@ public class OrderEventSchedule {
 
         for (OrderEvent orderEvent : orderEvents) {
             rabbitmqClient.send(exchangeName, routingPaymentKey, new OrderEventDto(orderEvent.getOrdersCode(), 0));
-            rabbitmqClient.send(exchangeName, routingProductDecreaseKey, orderEvent.getOrdersCode());
+            rabbitmqClient.send(exchangeName, routingProductDecreaseKey, new OrderEventDto(orderEvent.getOrdersCode(), 0));
             orderEvent.success();
         }
 
