@@ -9,6 +9,7 @@ rootProject.name = 'ecommerce'
 
 include(
         "domain",
+        "domain2:member",
         "ecommerce-api",
         "product-api",
         "payment-api",
@@ -16,6 +17,7 @@ include(
         "member-api",
         "message-relay",
         "storage:db",
+        "storage2:member-db",
         "storage:redis",
         "support:feign",
         "support:rabbitmq",
