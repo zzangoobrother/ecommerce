@@ -1,7 +1,9 @@
 package com.example.acceptance.utils;
 
 import com.example.model.Member;
+import com.example.model.Product;
 import com.example.repository.MemberRepository;
+import com.example.repository.ProductRepository;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
