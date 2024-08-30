@@ -2,8 +2,8 @@ package com.example.listener;
 
 import com.example.RabbitmqClient;
 import com.example.application.PaymentService;
-import com.example.application.dto.PaymentCancelDto;
 import com.example.listener.dto.OrderEventDto;
+import com.example.listener.dto.PaymentCancelDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Value;
