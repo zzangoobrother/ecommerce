@@ -7,10 +7,10 @@ tasks.getByName("jar") {
 }
 
 dependencies {
-    implementation(project(":domain2:member"))
+    implementation(project(":domain:member"))
 
     runtimeOnly(project(':storage:redis'))
-    runtimeOnly(project(':storage2:member-db'))
+    runtimeOnly(project(':storage:member-db'))
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'

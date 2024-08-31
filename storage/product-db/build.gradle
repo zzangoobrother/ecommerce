@@ -7,7 +7,7 @@ tasks.getByName("jar") {
 }
 
 dependencies {
-    compileOnly(project(":domain2:product"))
+    compileOnly(project(":domain:product"))
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 

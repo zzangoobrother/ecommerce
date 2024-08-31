@@ -28,9 +28,11 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         given(authMemberArgumentResolver.supportsParameter(any())).willReturn(true);
         given(authMemberArgumentResolver.resolveArgument(any(), any(), any(), any())).willReturn(1L);
 
-        주문하기_요청(productId, quantity);
+        주문하기_요청(productId, quantity, loginKey, loginValue);
 
-        ExtractableResponse<Response> response = 상품_단건_조회_요청(productId);
+        Thread.sleep(1000);
+
+        ExtractableResponse<Response> response = 상품_단건_조회_요청(productId, loginKey, loginValue);
 
         assertAll(
                 () -> assertThat(response.jsonPath().getLong("productId")).isEqualTo(productId),
@@ -43,11 +45,13 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         given(authMemberArgumentResolver.supportsParameter(any())).willReturn(true);
         given(authMemberArgumentResolver.resolveArgument(any(), any(), any(), any())).willReturn(1L);
 
-        주문하기_요청(productId, quantity);
+        주문하기_요청(productId, quantity, loginKey, loginValue);
 
-        주문하기_요청(productId, quantity);
+        주문하기_요청(productId, quantity, loginKey, loginValue);
 
-        ExtractableResponse<Response> response = 상품_단건_조회_요청(productId);
+        Thread.sleep(1000);
+
+        ExtractableResponse<Response> response = 상품_단건_조회_요청(productId, loginKey, loginValue);
 
         assertAll(
                 () -> assertThat(response.jsonPath().getLong("productId")).isEqualTo(productId),
@@ -61,11 +65,13 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         given(authMemberArgumentResolver.resolveArgument(any(), any(), any(), any())).willReturn(1L);
 
         CompletableFuture.allOf(
-                CompletableFuture.runAsync(() -> 주문하기_요청(productId, quantity)),
-                CompletableFuture.runAsync(() -> 주문하기_요청(productId, quantity))
+                CompletableFuture.runAsync(() -> 주문하기_요청(productId, quantity, loginKey, loginValue)),
+                CompletableFuture.runAsync(() -> 주문하기_요청(productId, quantity, loginKey, loginValue))
         ).join();
 
-        ExtractableResponse<Response> response = 상품_단건_조회_요청(productId);
+        Thread.sleep(1000);
+
+        ExtractableResponse<Response> response = 상품_단건_조회_요청(productId, loginKey, loginValue);
 
         assertAll(
                 () -> assertThat(response.jsonPath().getLong("productId")).isEqualTo(productId),
@@ -79,12 +85,14 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         given(authMemberArgumentResolver.resolveArgument(any(), any(), any(), any())).willReturn(1L);
 
         CompletableFuture.allOf(
-                CompletableFuture.runAsync(() -> 주문하기_요청(productId, quantity)),
-                CompletableFuture.runAsync(() -> 주문하기_요청(productId, quantity)),
-                CompletableFuture.runAsync(() -> 주문하기_요청(productId, quantity))
+                CompletableFuture.runAsync(() -> 주문하기_요청(productId, quantity, loginKey, loginValue)),
+                CompletableFuture.runAsync(() -> 주문하기_요청(productId, quantity, loginKey, loginValue)),
+                CompletableFuture.runAsync(() -> 주문하기_요청(productId, quantity, loginKey, loginValue))
         ).join();
 
-        ExtractableResponse<Response> response = 상품_단건_조회_요청(productId);
+        Thread.sleep(1000);
+
+        ExtractableResponse<Response> response = 상품_단건_조회_요청(productId, loginKey, loginValue);
 
         assertAll(
                 () -> assertThat(response.jsonPath().getLong("productId")).isEqualTo(productId),
