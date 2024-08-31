@@ -5,34 +5,36 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.springframework.http.MediaType;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProductSteps {
+public class MemberSteps {
 
-    public static ExtractableResponse<Response> 상품_단건_조회_요청(Long productId, String loginKey, String loginValue) {
+    public static ExtractableResponse<Response> 회원가입_요청(String loginId, String password, String name) {
+        Map<String, String> params = new HashMap<>();
+        params.put("loginId", loginId);
+        params.put("password", password);
+        params.put("name", name);
+
         return RestAssured.given().log().all()
+                .body(params)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .cookie(loginKey, loginValue)
                 .when()
-                .get("/api/v1/products/" + productId)
+                .post("/api/v1/members/signup")
                 .then().log().all()
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 상풍_등록_요청(String name, BigDecimal price, int quantity, String loginKey, String loginValue) {
+    public static ExtractableResponse<Response> 로그인_요청(String loginId, String password) {
         Map<String, String> params = new HashMap<>();
-        params.put("name", name);
-        params.put("price", price.toString());
-        params.put("quantity", quantity + "");
+        params.put("loginId", loginId);
+        params.put("password", password);
 
         return RestAssured.given().log().all()
                 .body(params)
-                .cookie(loginKey, loginValue)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
-                .post("/api/v1/products")
+                .post("/api/v1/members/login")
                 .then().log().all()
                 .extract();
     }

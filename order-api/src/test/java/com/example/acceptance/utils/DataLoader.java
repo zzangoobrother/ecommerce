@@ -1,37 +1,17 @@
 package com.example.acceptance.utils;
 
-import com.example.model.Member;
-import com.example.repository.MemberRepository;
+import com.example.acceptance.MemberSteps;
 import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
 
 @Component
 public class DataLoader {
 
-    private MemberRepository memberRepository;
-    private ProductRepository productRepository;
 
-    public DataLoader(MemberRepository memberRepository, ProductRepository productRepository) {
-        this.memberRepository = memberRepository;
-        this.productRepository = productRepository;
+    public DataLoader() {
+
     }
 
     public void loadData() {
-        memberRepository.save(
-                Member.builder()
-                        .loginId("abcde")
-                        .password("1234")
-                        .name("홍길동")
-                        .build()
-        );
-
-        productRepository.save(
-                Product.builder()
-                        .name("빈티지 티")
-                        .price(new BigDecimal("1000"))
-                        .quantity(100)
-                        .build()
-        );
+        MemberSteps.회원가입_요청("abcde", "1234", "홍길동");
     }
 }

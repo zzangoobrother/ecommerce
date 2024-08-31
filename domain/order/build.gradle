@@ -7,9 +7,8 @@ tasks.getByName("jar") {
 }
 
 dependencies {
-    implementation(project(':storage:redis'))
     implementation(project(':support:feign'))
-    implementation(project(':support:rabbitmq'))
+    implementation(project(':storage:redis'))
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.4'
 
