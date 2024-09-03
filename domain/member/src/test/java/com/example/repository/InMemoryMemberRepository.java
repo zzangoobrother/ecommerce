@@ -2,8 +2,10 @@ package com.example.repository;
 
 import com.example.model.Member;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class InMemoryMemberRepository implements MemberRepository {
 
@@ -11,6 +13,16 @@ public class InMemoryMemberRepository implements MemberRepository {
 
     @Override
     public Member save(Member member) {
+        if (Objects.isNull(member.getId())) {
+            int size = members.size();
+            member = Member.builder()
+                    .id(size == 0 ? 1 : Collections.max(members.keySet()) + 1)
+                    .loginId(member.getLoginId())
+                    .password(member.getPassword())
+                    .name(member.getName())
+                    .build();
+        }
+
         members.put(member.getId(), member);
         return member;
     }
