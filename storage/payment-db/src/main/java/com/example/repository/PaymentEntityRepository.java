@@ -16,13 +16,6 @@ class PaymentEntityRepository implements PaymentRepository {
         this.repository = repository;
     }
 
-    @Transactional
-    @Override
-    public Payment payment(Payment payment) {
-        log.info(payment.getPrice() + "원 결제가 완료 되었습니다.");
-        return repository.save(PaymentEntity.toPaymentEntity(payment)).toPayment();
-    }
-
     @Override
     public Payment getBy(String orderCode) {
         return repository.findByOrdersCode(orderCode).orElseThrow(
