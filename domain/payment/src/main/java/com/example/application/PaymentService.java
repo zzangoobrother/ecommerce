@@ -21,7 +21,7 @@ public class PaymentService {
     }
 
     public void payment(String orderCode, BigDecimal price) {
-        paymentRepository.payment(Payment.builder()
+        paymentRepository.save(Payment.builder()
                 .ordersCode(orderCode)
                 .price(price)
                 .status(Payment.Status.SUCCESS)
@@ -32,7 +32,7 @@ public class PaymentService {
     public void payment(String orderCode) {
         OrderResponse orderResponse = orderClient.getBy(orderCode);
 
-        paymentRepository.payment(Payment.builder()
+        paymentRepository.save(Payment.builder()
                 .ordersCode(orderCode)
                 .price(orderResponse.price())
                 .status(Payment.Status.SUCCESS)
