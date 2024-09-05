@@ -6,7 +6,7 @@ import com.example.model.OrderEventStatus;
 import java.util.List;
 
 public interface OrderEventRepository {
-    OrderEvent save(OrderEvent build);
+    OrderEvent save(OrderEvent orderEvent);
 
     List<OrderEvent> getAllBy(OrderEventStatus status);
 

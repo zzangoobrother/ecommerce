@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface PaymentClient {
 
     @PostMapping(value = "/payments", consumes = MediaType.APPLICATION_JSON_VALUE)
-    ProductResponse payment(@RequestBody PaymentRequest request);
+    void payment(@RequestBody PaymentRequest request);
 
     @PostMapping(value = "/payments/cancel", consumes = MediaType.APPLICATION_JSON_VALUE)
-    ProductResponse cancel(@RequestBody PaymentCancelRequest request);
+    void cancel(@RequestBody PaymentCancelRequest request);
 }
