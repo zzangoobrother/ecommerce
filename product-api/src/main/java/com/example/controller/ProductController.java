@@ -4,6 +4,7 @@ import com.example.application.ProductService;
 import com.example.controller.dto.request.CreateProductRequest;
 import com.example.controller.dto.request.ProductDecreaseRequest;
 import com.example.controller.dto.response.ProductResponse;
+import com.example.global.config.auth.AuthMember;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -43,8 +44,8 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
-    public ProductResponse getBy(@PathVariable Long productId) {
-        return ProductResponse.toProductResponse(productService.getBy(productId));
+    public ProductResponse getBy(@PathVariable Long productId, @AuthMember Long memberId) {
+        return ProductResponse.toProductResponse(productService.getBy(productId, memberId));
     }
 
     @GetMapping("/test")

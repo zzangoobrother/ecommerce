@@ -43,7 +43,7 @@ public class ProductService {
                 .toList();
     }
 
-    public ProductDomainResponse getBy(Long productId) {
+    public ProductDomainResponse getBy(Long productId, Long memberId) {
         Product product = productRepository.getBy(productId);
         return ProductDomainResponse.toProductDomainResponse(product);
     }
