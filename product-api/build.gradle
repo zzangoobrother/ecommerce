@@ -8,10 +8,12 @@ tasks.getByName("jar") {
 
 dependencies {
     implementation(project(":domain:product"))
+    implementation(project(":domain:queue"))
     implementation(project(':storage:redis'))
     implementation(project(':support:rabbitmq'))
 
     runtimeOnly(project(':storage:product-db'))
+    runtimeOnly(project(':storage:queue-db'))
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'

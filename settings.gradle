@@ -18,6 +18,7 @@ include(
         "payment-api",
         "order-api",
         "member-api",
+        "queue-api",
         "message-relay",
         "storage:member-db",
         "storage:product-db",
