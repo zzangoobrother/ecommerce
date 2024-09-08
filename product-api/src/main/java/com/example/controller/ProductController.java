@@ -1,10 +1,11 @@
 package com.example.controller;
 
-import com.example.application.ProductService;
 import com.example.controller.dto.request.CreateProductRequest;
 import com.example.controller.dto.request.ProductDecreaseRequest;
 import com.example.controller.dto.response.ProductResponse;
+import com.example.facade.ProductFacade;
 import com.example.global.config.auth.AuthMember;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,35 +18,36 @@ import java.util.List;
 @RestController
 public class ProductController {
 
-    private final ProductService productService;
+    private final ProductFacade productFacade;
 
-    public ProductController(ProductService productService) {
-        this.productService = productService;
+    public ProductController(ProductFacade productFacade) {
+        this.productFacade = productFacade;
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Long create(@Valid @RequestBody CreateProductRequest request) {
         log.info("create");
-        return productService.create(request.name(), request.price(), request.quantity());
+        return productFacade.create(request.name(), request.price(), request.quantity());
     }
 
     @PostMapping("/{productId}/decrease")
     public void decrease(@PathVariable Long productId, @RequestBody ProductDecreaseRequest request) {
-        productService.decrease(productId, request.quantity());
+        productFacade.decrease(productId, request.quantity());
     }
 
     @GetMapping
     public List<ProductResponse> getAll() {
         log.info("getAll");
-        return productService.getAll().stream()
+        return productFacade.getAll().stream()
                 .map(ProductResponse::toProductResponse)
                 .toList();
     }
 
     @GetMapping("/{productId}")
-    public ProductResponse getBy(@PathVariable Long productId, @AuthMember Long memberId) {
-        return ProductResponse.toProductResponse(productService.getBy(productId, memberId));
+    public ProductResponse getBy(@PathVariable Long productId, @AuthMember Long memberId, HttpServletRequest request) {
+        String token = request.getHeader("queue-token");
+        return ProductResponse.toProductResponse(productFacade.getBy(productId, memberId, token));
     }
 
     @GetMapping("/test")

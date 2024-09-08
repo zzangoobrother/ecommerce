@@ -19,3 +19,7 @@ route:
   order-api:
     v1:
       base-url: http://localhost:8086
+
+  queue-api:
+    v1:
+      base-url: http://localhost:8089

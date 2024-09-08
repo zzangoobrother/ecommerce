@@ -21,44 +21,45 @@ public class QueueEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "token", nullable = false)
+    @Column(name = "member_id", unique = true, nullable = false)
+    private Long memberId;
+
+    @Column(name = "token", unique = true, nullable = false)
     private String token;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "expired_at", nullable = false)
-    private LocalDateTime expiredAt;
-
     @Builder
-    public QueueEntity(Long id, String token, Status status, LocalDateTime createdAt, LocalDateTime expiredAt) {
+    public QueueEntity(Long id, Long memberId, String token, Status status, LocalDateTime createdAt) {
         this.id = id;
+        this.memberId = memberId;
         this.token = token;
         this.status = status;
         this.createdAt = createdAt;
-        this.expiredAt = expiredAt;
     }
 
     public static QueueEntity toQueueEntity(Queue queue) {
         return QueueEntity.builder()
                 .id(queue.getId())
+                .memberId(queue.getMemberId())
                 .token(queue.getToken())
                 .status(queue.getStatus())
                 .createdAt(queue.getCreatedAt())
-                .expiredAt(queue.getExpiredAt())
                 .build();
     }
 
     public Queue toQueue() {
         return Queue.builder()
                 .id(getId())
+                .memberId(getMemberId())
                 .token(getToken())
                 .status(getStatus())
                 .createdAt(getCreatedAt())
-                .expiredAt(getExpiredAt())
                 .build();
     }
 }
