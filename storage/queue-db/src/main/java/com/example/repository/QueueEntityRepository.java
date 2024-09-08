@@ -25,6 +25,13 @@ public class QueueEntityRepository implements QueueRepository {
     }
 
     @Override
+    public Queue getBy(String token) {
+        return repository.findByToken(token).orElseThrow(
+                () -> new IllegalArgumentException("해당 대기열을 찾을 수 없습니다.")
+        ).toQueue();
+    }
+
+    @Override
     public Queue save(Queue queue) {
         return repository.save(QueueEntity.toQueueEntity(queue)).toQueue();
     }

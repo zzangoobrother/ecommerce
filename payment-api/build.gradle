@@ -8,7 +8,6 @@ tasks.getByName("jar") {
 
 dependencies {
     implementation(project(":domain:payment"))
-    implementation(project(":domain:queue"))
     implementation(project(':support:rabbitmq'))
 
     runtimeOnly(project(':storage:payment-db'))

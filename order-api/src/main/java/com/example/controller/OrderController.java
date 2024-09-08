@@ -5,6 +5,7 @@ import com.example.application.dto.OrderDto;
 import com.example.controller.dto.request.OrderRequest;
 import com.example.controller.dto.response.OrderResponse;
 import com.example.global.config.auth.AuthMember;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +21,12 @@ public class OrderController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public String order(@RequestBody OrderRequest request, @AuthMember Long memberId) {
+    public String order(@RequestBody OrderRequest orderRequest, @AuthMember Long memberId, HttpServletRequest request) {
 //        return orderService.order(request.productId(), request.quantity(), memberId);
 
 //        return orderService.orderByRedisLock(request.productId(), request.quantity(), memberId);
-
-        return orderService.orderByRabbitmq(request.productId(), request.quantity(), memberId);
+        String token = request.getHeader("queue-token");
+        return orderService.orderByRabbitmq(orderRequest.productId(), orderRequest.quantity(), memberId, token);
     }
 
     @GetMapping

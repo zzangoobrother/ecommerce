@@ -18,6 +18,6 @@ public class OrderEventListener {
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void orderMessage(OrderEventDto orderEventDto) {
-        orderEventRepository.save(OrderEvent.builder().ordersCode(orderEventDto.getOrderCode()).status(OrderEventStatus.INIT).build());
+        orderEventRepository.save(OrderEvent.builder().ordersCode(orderEventDto.orderCode()).status(OrderEventStatus.INIT).build());
     }
 }

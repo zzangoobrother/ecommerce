@@ -35,6 +35,10 @@ public class Queue {
         this.status = Status.PROCESSING;
     }
 
+    public void updateComplete() {
+        this.status = Status.COMPLETED;
+    }
+
     @Override
     public String toString() {
         return "Queue{" +

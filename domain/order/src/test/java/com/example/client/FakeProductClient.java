@@ -10,7 +10,7 @@ public class FakeProductClient implements ProductClient {
     private int quantity = 3;
 
     @Override
-    public ProductResponse getBy(Long productId) {
+    public ProductResponse getBy(Long productId, String token) {
         return new ProductResponse(1L, "후드티", BigDecimal.valueOf(1000), quantity);
     }
 

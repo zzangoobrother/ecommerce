@@ -71,4 +71,10 @@ public class QueueService {
 
         queueRepository.saveAll(queues);
     }
+
+    public void complete(String token) {
+        Queue queue = queueRepository.getBy(token);
+        queue.updateComplete();
+        queueRepository.save(queue);
+    }
 }
