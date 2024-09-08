@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Enumeration;
 import java.util.List;
 
 @Slf4j
@@ -46,6 +47,11 @@ public class ProductController {
 
     @GetMapping("/{productId}")
     public ProductResponse getBy(@PathVariable Long productId, @AuthMember Long memberId, HttpServletRequest request) {
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String s = headerNames.nextElement();
+            System.out.println(s);
+        }
         String token = request.getHeader("queue-token");
         return ProductResponse.toProductResponse(productFacade.getBy(productId, memberId, token));
     }

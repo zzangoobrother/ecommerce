@@ -14,6 +14,8 @@ public interface QueueJpaRepository extends JpaRepository<QueueEntity, Long> {
 
     Optional<QueueEntity> findByMemberIdAndToken(Long memberId, String token);
 
+    Optional<QueueEntity> findByToken(String token);
+
     int countByStatusAndCreatedAtLessThanEqual(Status status, LocalDateTime createdAt);
 
     int countByStatus(Status status);

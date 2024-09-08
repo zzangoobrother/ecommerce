@@ -15,6 +15,10 @@ order:
   api:
     url: http://localhost:8086
 
+queue:
+  api:
+    url: http://localhost:8089
+
 ---
 spring:
   config:
@@ -32,3 +36,7 @@ payment:
 order:
   api:
     url: http://order-api:8086
+
+queue:
+  api:
+    url: http://queue-api:8089

@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.application.QueueService;
+import com.example.controller.dto.QueueRequest;
 import com.example.controller.dto.QueueResponse;
 import com.example.global.config.auth.AuthMember;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,5 +29,10 @@ public class QueueController {
     @GetMapping
     public QueueResponse getBy(@AuthMember Long memberId, HttpServletRequest request) {
         return QueueResponse.to(queueService.getBy(memberId, request.getHeader("queue-token")));
+    }
+
+    @PostMapping("/complete")
+    public void complete(@RequestBody QueueRequest request) {
+        queueService.complete(request.token());
     }
 }

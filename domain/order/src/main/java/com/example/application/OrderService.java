@@ -42,12 +42,12 @@ public class OrderService {
     }
 
     @Transactional
-    public String order(Long productId, int quantity, Long memberId) {
+    public String order(Long productId, int quantity, Long memberId, String token) {
         // 상품 재고 확인
 //        Product product = productRepository.getLockBy(productId);
 //        product.checkQuantity(quantity);
 
-        ProductResponse productResponse = productClient.getBy(productId);
+        ProductResponse productResponse = productClient.getBy(productId, token);
         if (productResponse.quantity() - quantity < 0) {
             throw new IllegalStateException("재고 수량이 부족합니다.");
         }
@@ -82,9 +82,9 @@ public class OrderService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @DistributedLock(key = "#productId")
-    public String orderByRedisLock(Long productId, int quantity, Long memberId) {
+    public String orderByRedisLock(Long productId, int quantity, Long memberId, String token) {
         // 상품 재고 확인
-        ProductResponse productResponse = productClient.getBy(productId);
+        ProductResponse productResponse = productClient.getBy(productId, token);
         if (productResponse.quantity() - quantity < 0) {
             throw new IllegalStateException("재고 수량이 부족합니다.");
         }
@@ -123,9 +123,9 @@ public class OrderService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public String orderByRabbitmq(Long productId, int quantity, Long memberId) {
+    public String orderByRabbitmq(Long productId, int quantity, Long memberId, String token) {
         // 상품 재고 확인
-        ProductResponse productResponse = productClient.getBy(productId);
+        ProductResponse productResponse = productClient.getBy(productId, token);
 
         String orderCode = OrderCodeSequence.create(LocalDateTime.now());
         int decrementQuantity = productResponse.quantity();
@@ -154,7 +154,7 @@ public class OrderService {
                 .build();
         orderDetailRepository.save(orderDetail);
 
-        publisher.publishEvent(new OrderEventDto(orderCode));
+        publisher.publishEvent(new OrderEventDto(orderCode, token));
 
         return orderCode;
     }

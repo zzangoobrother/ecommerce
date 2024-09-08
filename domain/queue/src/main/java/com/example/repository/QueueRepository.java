@@ -9,6 +9,8 @@ import java.util.List;
 public interface QueueRepository {
     Queue getBy(Long memberId, String token);
 
+    Queue getBy(String token);
+
     Queue save(Queue queue);
 
     int countRemainWait(Status status, LocalDateTime createdAt);
