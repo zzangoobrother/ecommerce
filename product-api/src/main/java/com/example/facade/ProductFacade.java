@@ -35,8 +35,8 @@ public class ProductFacade {
      * 1. token을 통해 queue 상태 검증
      * 2. 상품 상세 정보 조회 리턴
      */
-    public ProductDomainResponse getBy(Long productId, Long memberId, String token) {
-        queueService.checkedByProcessing(memberId, token);
+    public ProductDomainResponse getBy(Long productId, String token) {
+        queueService.checkedByProcessing(token);
         return productService.getBy(productId);
     }
 }

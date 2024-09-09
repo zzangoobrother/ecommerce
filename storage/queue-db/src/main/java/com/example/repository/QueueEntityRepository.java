@@ -61,4 +61,16 @@ public class QueueEntityRepository implements QueueRepository {
 
         repository.saveAll(queueEntities);
     }
+
+    @Override
+    public void deleteByCompleted(List<Long> queueIds) {
+        repository.deleteAllById(queueIds);
+    }
+
+    @Override
+    public List<Queue> getByStatus(Status status) {
+        return repository.findAllByStatus(status).stream()
+                .map(QueueEntity::toQueue)
+                .toList();
+    }
 }

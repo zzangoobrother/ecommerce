@@ -22,4 +22,6 @@ public interface QueueJpaRepository extends JpaRepository<QueueEntity, Long> {
 
     @Query("select queue from QueueEntity queue where status = :status order by createdAt asc limit :neededCount")
     List<QueueEntity> findTopByWaitting(@Param("status") Status status, @Param("neededCount") int neededCount);
+
+    List<QueueEntity> findAllByStatus(Status status);
 }

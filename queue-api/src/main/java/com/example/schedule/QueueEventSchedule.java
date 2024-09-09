@@ -16,5 +16,6 @@ public class QueueEventSchedule {
     @Scheduled(fixedRate = 5000)
     public void run() {
         queueService.maintainProcessing();
+        queueService.deletedCompleted();
     }
 }
