@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(value = "queueClient", url = "${queue.api.url}")
 public interface QueueClient {
 
-    @PostMapping(value = "/queue/complete", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/queues/complete", consumes = MediaType.APPLICATION_JSON_VALUE)
     void complete(@RequestBody QueueRequest request);
 }

@@ -20,4 +20,8 @@ public interface QueueRepository {
     List<Queue> getAllBy(Status status, int neededCount);
 
     void saveAll(List<Queue> queues);
+
+    void deleteByCompleted(List<Long> queueIds);
+
+    List<Queue> getByStatus(Status status);
 }

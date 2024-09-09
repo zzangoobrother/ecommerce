@@ -21,8 +21,8 @@ public class QueueService {
         this.queueRepository = queueRepository;
     }
 
-    public void checkedByProcessing(Long memberId, String token) {
-        Queue queue = queueRepository.getBy(memberId, token);
+    public void checkedByProcessing(String token) {
+        Queue queue = queueRepository.getBy(token);
         if (!queue.checkedProcessing()) {
             throw new IllegalStateException("해당 토큰을 확인해주세요.");
         }
@@ -76,5 +76,13 @@ public class QueueService {
         Queue queue = queueRepository.getBy(token);
         queue.updateComplete();
         queueRepository.save(queue);
+    }
+
+    public void deletedCompleted() {
+        List<Queue> queues = queueRepository.getByStatus(Status.COMPLETED);
+        List<Long> queueIds = queues.stream()
+                .map(Queue::getId)
+                .toList();
+        queueRepository.deleteByCompleted(queueIds);
     }
 }

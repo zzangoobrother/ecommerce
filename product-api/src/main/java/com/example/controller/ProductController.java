@@ -46,14 +46,9 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
-    public ProductResponse getBy(@PathVariable Long productId, @AuthMember Long memberId, HttpServletRequest request) {
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String s = headerNames.nextElement();
-            System.out.println(s);
-        }
+    public ProductResponse getBy(@PathVariable Long productId, HttpServletRequest request) {
         String token = request.getHeader("queue-token");
-        return ProductResponse.toProductResponse(productFacade.getBy(productId, memberId, token));
+        return ProductResponse.toProductResponse(productFacade.getBy(productId, token));
     }
 
     @GetMapping("/test")
