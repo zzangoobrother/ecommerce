@@ -12,11 +12,22 @@
 ### 사용 기술
 Java, Spring Boot, Spring Data JPA, Spring Cloud Gateway, MySql, Redis, Rabbitmq
 
+### 모듈
+<img src="./images/상품주문하기-모듈 아키텍쳐.png" width="650" height="400">
+
+- Domain 모듈은 비즈니스 모듈로 외부 요소에 따른 변경이 되지 않게 한다.
+- Storage는 Domain 모듈를 의존한다.
+- API 모듈은 Domain 모듈을 의존, Storage 모듈은 Runtime 때 동적으로 가져온다.
+
 ### ERD
 <img src="./images/ecommerce_erd.png" width="650" height="400">
 
 ### Sequence Diagram
-<img src="./images/sequence_diagram.png" width="650" height="400">
+<img src="./images/주문시퀀스다이어그램.png" width="700" height="500">
+
+- Gateway에서 회원 인증 검증
+- OrderService는 Redis에서 상품 재고 검증
+- Transactional Outbox Pattern 적용, Message Relay를 통해 Message Event RabbitMQ에 전달
 
 ### 아키텍쳐
 - 전체 서버 아키텍쳐
