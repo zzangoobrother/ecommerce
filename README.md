@@ -31,10 +31,7 @@ Java, Spring Boot, Spring Data JPA, Spring Cloud Gateway, MySql, Redis, Rabbitmq
 
 ### 아키텍쳐
 - 전체 서버 아키텍쳐
-<img src="./images/이커머스_상품주문하기-전체 서버 아키텍쳐.png" width="650" height="400">
-
-- 주문하기 아키텍쳐
-<img src="./images/이커머스_상품주문하기-주문 서버 아키텍쳐.png" width="650" height="400">
+<img src="./images/이커머스_상품주문하기_전체서버아키텍쳐.png" width="650" height="400">
 
 ### 개발 일대기
 
