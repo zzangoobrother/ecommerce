@@ -1,6 +1,6 @@
 package com.example.controller;
 
-import com.example.application.QueueService;
+import com.example.application.DbQueueService;
 import com.example.controller.dto.QueueRequest;
 import com.example.controller.dto.QueueResponse;
 import com.example.global.config.auth.AuthMember;
@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class QueueController {
 
-    private final QueueService queueService;
+    private final DbQueueService queueService;
 
-    public QueueController(QueueService queueService) {
+    public QueueController(DbQueueService queueService) {
         this.queueService = queueService;
     }
 

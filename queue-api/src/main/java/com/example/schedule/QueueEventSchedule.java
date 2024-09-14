@@ -1,21 +1,21 @@
 package com.example.schedule;
 
-import com.example.application.QueueService;
+import com.example.application.DbQueueService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 public class QueueEventSchedule {
 
-    private final QueueService queueService;
+    private final DbQueueService dbQueueService;
 
-    public QueueEventSchedule(QueueService queueService) {
-        this.queueService = queueService;
+    public QueueEventSchedule(DbQueueService dbQueueService) {
+        this.dbQueueService = dbQueueService;
     }
 
     @Scheduled(fixedRate = 5000)
     public void run() {
-        queueService.maintainProcessing();
-        queueService.deletedCompleted();
+        dbQueueService.maintainProcessing();
+        dbQueueService.deletedCompleted();
     }
 }
