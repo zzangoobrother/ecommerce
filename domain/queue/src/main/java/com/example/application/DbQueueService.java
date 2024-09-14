@@ -12,12 +12,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class QueueService {
+public class DbQueueService {
     private final static int ALLOWED_QUEUE_SIZE = 1;
 
     private final QueueRepository queueRepository;
 
-    public QueueService(QueueRepository queueRepository) {
+    public DbQueueService(QueueRepository queueRepository) {
         this.queueRepository = queueRepository;
     }
 
