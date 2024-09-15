@@ -1,15 +1,15 @@
 package com.example.schedule;
 
-import com.example.application.DbQueueService;
+import com.example.application.RedisQueueService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 public class QueueEventSchedule {
 
-    private final DbQueueService dbQueueService;
+    private final RedisQueueService dbQueueService;
 
-    public QueueEventSchedule(DbQueueService dbQueueService) {
+    public QueueEventSchedule(RedisQueueService dbQueueService) {
         this.dbQueueService = dbQueueService;
     }
 
