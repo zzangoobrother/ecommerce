@@ -50,9 +50,7 @@ public class DbQueueService {
         }
 
         return new QueueDto(
-                queue.getId(),
                 queue.getStatus(),
-                queue.getCreatedAt(),
                 remainWaitCount
         );
     }
