@@ -14,6 +14,7 @@ import com.example.model.OrderDetail;
 import com.example.repository.OrderDetailRepository;
 import com.example.repository.OrderRepository;
 import com.example.repository.RedisSetRepository;
+import com.example.repository.RedisZSetRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -24,20 +25,23 @@ import java.time.LocalDateTime;
 
 @Service
 public class OrderService {
+    private final String PROCESSING_QUEUE_KEY = "processing_queue";
 
     private final ProductClient productClient;
     private final PaymentClient paymentClient;
     private final RedisSetRepository redisSetRepository;
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
+    private final RedisZSetRepository redisZSetRepository;
     private final ApplicationEventPublisher publisher;
 
-    public OrderService(ProductClient productClient, PaymentClient paymentClient, RedisSetRepository redisSetRepository, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository, ApplicationEventPublisher publisher) {
+    public OrderService(ProductClient productClient, PaymentClient paymentClient, RedisSetRepository redisSetRepository, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository, RedisZSetRepository redisZSetRepository, ApplicationEventPublisher publisher) {
         this.productClient = productClient;
         this.paymentClient = paymentClient;
         this.redisSetRepository = redisSetRepository;
         this.orderRepository = orderRepository;
         this.orderDetailRepository = orderDetailRepository;
+        this.redisZSetRepository = redisZSetRepository;
         this.publisher = publisher;
     }
 
@@ -153,6 +157,8 @@ public class OrderService {
                 .status(OrderDetail.OrderStatus.COMPLETE)
                 .build();
         orderDetailRepository.save(orderDetail);
+
+        redisZSetRepository.removeBy(PROCESSING_QUEUE_KEY, token);
 
         publisher.publishEvent(new OrderEventDto(orderCode, token));
 

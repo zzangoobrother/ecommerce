@@ -1,7 +1,7 @@
 package com.example.facade;
 
 import com.example.application.ProductService;
-import com.example.application.DbQueueService;
+import com.example.application.RedisQueueService;
 import com.example.application.dto.ProductDomainResponse;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +12,11 @@ import java.util.List;
 public class ProductFacade {
 
     private final ProductService productService;
-    private final DbQueueService queueService;
+    private final RedisQueueService queueService;
 
-    public ProductFacade(ProductService productService, DbQueueService dbQueueService) {
+    public ProductFacade(ProductService productService, RedisQueueService queueService) {
         this.productService = productService;
-        this.queueService = dbQueueService;
+        this.queueService = queueService;
     }
 
     public Long create(String name, BigDecimal price, int quantity) {

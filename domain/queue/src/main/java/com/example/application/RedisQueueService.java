@@ -32,7 +32,7 @@ public class RedisQueueService {
         }
     }
 
-    public String create(Long memberId) {
+    public String create() {
         LocalDateTime now = LocalDateTime.now();
         String token = TokenSequence.create(now);
         repository.add(WAITING_QUEUE_KEY, token, now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
@@ -40,12 +40,12 @@ public class RedisQueueService {
         return token;
     }
 
-    public QueueDto getBy(Long memberId, String token) {
+    public QueueDto getBy(String token) {
         boolean result = repository.isWaitingQueue(WAITING_QUEUE_KEY, token);
 
         int remainWaitCount = 0;
         if (result) {
-            remainWaitCount = repository.countRemainWait(WAITING_QUEUE_KEY, token);
+            remainWaitCount = repository.countRemainWait(WAITING_QUEUE_KEY, token) + 1;
         }
 
         return new QueueDto(
