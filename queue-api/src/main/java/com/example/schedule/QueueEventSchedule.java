@@ -7,15 +7,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class QueueEventSchedule {
 
-    private final RedisQueueService dbQueueService;
+    private final RedisQueueService queueService;
 
-    public QueueEventSchedule(RedisQueueService dbQueueService) {
-        this.dbQueueService = dbQueueService;
+    public QueueEventSchedule(RedisQueueService queueService) {
+        this.queueService = queueService;
     }
 
     @Scheduled(fixedRate = 5000)
     public void run() {
-        dbQueueService.maintainProcessing();
-        dbQueueService.deletedCompleted();
+        queueService.maintainProcessing();
+        queueService.deletedCompleted();
     }
 }

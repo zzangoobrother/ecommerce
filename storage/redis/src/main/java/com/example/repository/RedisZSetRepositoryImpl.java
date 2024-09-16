@@ -29,7 +29,7 @@ public class RedisZSetRepositoryImpl implements RedisZSetRepository {
     @Override
     public boolean isProcessingQueue(String key, String token) {
         Double score = redisTemplate.opsForZSet().score(key, token);
-        return !Objects.isNull(score);
+        return Objects.isNull(score);
     }
 
     @Override

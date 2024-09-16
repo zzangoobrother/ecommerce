@@ -22,13 +22,13 @@ public class QueueController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public String create(@AuthMember Long memberId) {
-        return queueService.create(memberId);
+    public String create() {
+        return queueService.create();
     }
 
     @GetMapping
-    public QueueResponse getBy(@AuthMember Long memberId, HttpServletRequest request) {
-        return QueueResponse.to(queueService.getBy(memberId, request.getHeader("queue-token")));
+    public QueueResponse getBy(HttpServletRequest request) {
+        return QueueResponse.to(queueService.getBy(request.getHeader("queue-token")));
     }
 
     @PostMapping("/complete")
