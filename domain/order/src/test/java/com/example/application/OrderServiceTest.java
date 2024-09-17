@@ -40,12 +40,12 @@ class OrderServiceTest {
         redisSetRepository = new FakeRedisSetRepository();
         applicationEventPublisher = new FakeApplicationEventPublisher();
 
-        orderService = new OrderService(productClient, paymentClient, redisSetRepository, orderRepository, orderDetailRepository, applicationEventPublisher);
+        orderService = new OrderService(productClient, paymentClient, redisSetRepository, orderRepository, orderDetailRepository, null, applicationEventPublisher);
     }
 
     @Test
     void db_lock_사용_주문하기() {
-        String orderCode = orderService.order(1L, 1, 1L);
+        String orderCode = orderService.order(1L, 1, 1L, "token");
 
         Order order = orderRepository.getBy(orderCode);
         assertAll(
@@ -64,7 +64,7 @@ class OrderServiceTest {
 
     @Test
     void db_lock_주문하기_재고_부족시_에러() {
-        assertThatThrownBy(() -> orderService.order(1L, 4, 1L))
+        assertThatThrownBy(() -> orderService.order(1L, 4, 1L, "token"))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("재고 수량이 부족합니다.");
     }
