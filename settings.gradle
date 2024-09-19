@@ -28,5 +28,6 @@ include(
         "storage:redis",
         "support:feign",
         "support:rabbitmq",
+        "support:kafka-producer",
         "gateway"
 )

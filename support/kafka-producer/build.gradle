@@ -1,0 +1,15 @@
+tasks.getByName("bootJar") {
+    enabled = false
+}
+
+tasks.getByName("jar") {
+    enabled = true
+}
+
+dependencies {
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    compileOnly 'org.springframework:spring-context'
+}
+
+tasks.register("prepareKotlinBuildScriptModel") {}
