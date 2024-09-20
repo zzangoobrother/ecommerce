@@ -29,5 +29,6 @@ include(
         "support:feign",
         "support:rabbitmq",
         "support:kafka-producer",
+        "support:kafka-consumer",
         "gateway"
 )
