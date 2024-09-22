@@ -17,13 +17,13 @@ import java.util.Map;
 @Configuration
 public class KafkaConsumerConfig {
 
-    private static final String KAFKA_ADDRESS = "";
+    private static final String KAFKA_ADDRESS = "localhost:29092";
 
     @Bean
     public ConsumerFactory<String, Object> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_ADDRESS);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "ecommerce-1");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
 
