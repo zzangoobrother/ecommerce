@@ -8,6 +8,7 @@ tasks.getByName("jar") {
 
 dependencies {
     implementation(project(':storage:redis'))
+    implementation(project(':support:kafka-producer'))
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.4'
 

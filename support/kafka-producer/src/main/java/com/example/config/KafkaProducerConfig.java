@@ -15,7 +15,7 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerConfig {
 
-    private static final String KAFKA_ADDRESS = "";
+    private static final String KAFKA_ADDRESS = "localhost:29092";
 
     @Bean
     public KafkaTemplate<String, Object> kafkaTemplate() {
