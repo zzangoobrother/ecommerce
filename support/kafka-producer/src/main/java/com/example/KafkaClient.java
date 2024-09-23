@@ -5,6 +5,7 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Component
 public class KafkaClient<T> {
@@ -15,7 +16,13 @@ public class KafkaClient<T> {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public CompletableFuture<SendResult<String, T>> send(String topic, T data) {
-        return kafkaTemplate.send(topic, data);
+    public long send(String topic, T data) {
+        try {
+            return kafkaTemplate.send(topic, data).get().getRecordMetadata().offset();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
