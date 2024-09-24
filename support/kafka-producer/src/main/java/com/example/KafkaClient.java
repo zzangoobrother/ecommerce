@@ -1,5 +1,7 @@
 package com.example;
 
+import com.example.config.SendDto;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
@@ -16,9 +18,12 @@ public class KafkaClient<T> {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public long send(String topic, T data) {
+    public SendDto send(String topic, T data) {
         try {
-            return kafkaTemplate.send(topic, data).get().getRecordMetadata().offset();
+            RecordMetadata recordMetadata = kafkaTemplate.send(topic, data).get().getRecordMetadata();
+            long offset = recordMetadata.offset();
+            int partition = recordMetadata.partition();
+            return new SendDto(offset, partition);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } catch (ExecutionException e) {
