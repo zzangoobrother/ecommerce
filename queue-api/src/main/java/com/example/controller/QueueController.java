@@ -49,6 +49,6 @@ public class QueueController {
     @GetMapping("/kafka/{remainWaitCount}")
     public QueueKafkaResponse getKafkaBy(@PathVariable long remainWaitCount, HttpServletRequest request) {
         kafkaQueueService.getBy(request.getHeader("queue-token"), remainWaitCount);
-        return QueueKafkaResponse.to();
+        return null;
     }
 }

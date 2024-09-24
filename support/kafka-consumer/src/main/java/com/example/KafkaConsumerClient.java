@@ -16,13 +16,13 @@ public class KafkaConsumerClient {
     }
 
     public long getPosition(String topic) {
-        TopicPartition topicPartition = new TopicPartition(topic, 1);
+        TopicPartition topicPartition = new TopicPartition(topic, 0);
         kafkaConsumer.assign(Collections.singletonList(topicPartition));
         return kafkaConsumer.position(topicPartition) - 1;
     }
 
     public long getEndPosition(String topic) {
-        TopicPartition topicPartition = new TopicPartition(topic, 1);
+        TopicPartition topicPartition = new TopicPartition(topic, 0);
         kafkaConsumer.assign(Collections.singletonList(topicPartition));
         kafkaConsumer.seekToEnd(Collections.singletonList(topicPartition));
         return kafkaConsumer.position(topicPartition) - 1;
