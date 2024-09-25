@@ -11,7 +11,6 @@ dependencies {
     implementation(project(":domain:queue"))
     implementation(project(':storage:redis'))
     implementation(project(':support:rabbitmq'))
-    implementation(project(':support:kafka-producer'))
 
     runtimeOnly(project(':storage:product-db'))
     runtimeOnly(project(':storage:queue-db'))
