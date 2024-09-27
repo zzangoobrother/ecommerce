@@ -29,7 +29,7 @@ public class ProductListener {
     public void decrease(OrderEventDto orderEventDto) {
         try {
             if (orderEventDto.getCount() > 3) {
-                log.info("결제 3회 실패 Dead Letter Queue 이동");
+                log.info("상품 갯수 차감 3회 실패 Dead Letter Queue 이동");
                 return;
             }
 

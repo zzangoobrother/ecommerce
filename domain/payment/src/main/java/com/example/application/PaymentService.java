@@ -4,6 +4,7 @@ import com.example.client.OrderClient;
 import com.example.client.dto.response.OrderResponse;
 import com.example.model.Payment;
 import com.example.repository.PaymentRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,10 +15,12 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final OrderClient orderClient;
+    private final ApplicationEventPublisher publisher;
 
-    public PaymentService(PaymentRepository paymentRepository, OrderClient orderClient) {
+    public PaymentService(PaymentRepository paymentRepository, OrderClient orderClient, ApplicationEventPublisher publisher) {
         this.paymentRepository = paymentRepository;
         this.orderClient = orderClient;
+        this.publisher = publisher;
     }
 
     public void payment(String orderCode, BigDecimal price) {
@@ -26,6 +29,8 @@ public class PaymentService {
                 .price(price)
                 .status(Payment.Status.SUCCESS)
                 .build());
+
+        publisher.publishEvent(orderCode);
     }
 
     @Transactional
@@ -37,6 +42,8 @@ public class PaymentService {
                 .price(orderResponse.price())
                 .status(Payment.Status.SUCCESS)
                 .build());
+
+        publisher.publishEvent(orderCode);
     }
 
     public void cancel(String orderCode) {
