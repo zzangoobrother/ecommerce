@@ -28,7 +28,7 @@ class PaymentServiceTest {
     void setUp() {
         paymentRepository = new InMemoryPaymentRepository();
         orderClient = new FakeOrderClient();
-        paymentService = new PaymentService(paymentRepository, orderClient);
+        paymentService = new PaymentService(paymentRepository, orderClient, null);
     }
 
     @Test

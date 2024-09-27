@@ -21,9 +21,6 @@ public class OrderEventSchedule {
     @Value("${rabbitmq.routing.payment.key}")
     private String routingPaymentKey;
 
-    @Value("${rabbitmq.routing.product.decrease.key}")
-    private String routingProductDecreaseKey;
-
     private final OrderEventRepository orderEventRepository;
     private final RabbitmqClient rabbitmqClient;
 
@@ -44,7 +41,6 @@ public class OrderEventSchedule {
 
         for (OrderEvent orderEvent : orderEvents) {
             rabbitmqClient.send(exchangeName, routingPaymentKey, new OrderEventDto(orderEvent.getOrdersCode(), 0));
-            rabbitmqClient.send(exchangeName, routingProductDecreaseKey, new OrderEventDto(orderEvent.getOrdersCode(), 0));
             orderEvent.success();
         }
 
