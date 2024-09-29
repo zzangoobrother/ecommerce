@@ -14,4 +14,8 @@ public interface ProductRepository {
     Product getLockBy(Long productId);
 
     boolean existsBy(String name);
+
+    List<Product> getAllBy(List<Long> productIds);
+
+    List<Product> saveAll(List<Product> products);
 }

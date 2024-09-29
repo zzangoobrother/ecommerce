@@ -45,4 +45,21 @@ class ProductEntityRepository implements ProductRepository {
     public boolean existsBy(String name) {
         return repository.existsByName(name);
     }
+
+    @Override
+    public List<Product> getAllBy(List<Long> productIds) {
+        return repository.findAllById(productIds).stream()
+                .map(ProductEntity::toProduct)
+                .toList();
+    }
+
+    @Override
+    public List<Product> saveAll(List<Product> products) {
+        List<ProductEntity> result = products.stream()
+                .map(ProductEntity::toProductEntity)
+                .toList();
+        return repository.saveAll(result).stream()
+                .map(ProductEntity::toProduct)
+                .toList();
+    }
 }

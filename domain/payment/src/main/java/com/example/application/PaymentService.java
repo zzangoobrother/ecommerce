@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class PaymentService {
@@ -35,11 +36,14 @@ public class PaymentService {
 
     @Transactional
     public void payment(String orderCode) {
-        OrderResponse orderResponse = orderClient.getBy(orderCode);
+        List<OrderResponse> orderResponses = orderClient.getBy(orderCode);
+        BigDecimal totalPrice = orderResponses.stream()
+                .map(it -> it.price().multiply(BigDecimal.valueOf(it.quantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         paymentRepository.save(Payment.builder()
                 .ordersCode(orderCode)
-                .price(orderResponse.price())
+                .price(totalPrice)
                 .status(Payment.Status.SUCCESS)
                 .build());
 
