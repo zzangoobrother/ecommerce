@@ -2,6 +2,7 @@ package com.example.application;
 
 import com.example.annotation.DistributedLock;
 import com.example.application.dto.OrderDto;
+import com.example.application.dto.OrderRequestDto;
 import com.example.application.event.OrderEventDto;
 import com.example.client.PaymentClient;
 import com.example.client.ProductClient;
@@ -22,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class OrderService {
@@ -127,20 +130,27 @@ public class OrderService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public String orderByRabbitmq(Long productId, int quantity, Long memberId, String token) {
+    public String orderByRabbitmq(List<OrderRequestDto> dtos, Long memberId, String token) {
         // 상품 재고 확인
-        ProductResponse productResponse = productClient.getBy(productId, token);
-
         String orderCode = OrderCodeSequence.create(LocalDateTime.now());
-        int decrementQuantity = productResponse.quantity();
-        String code = redisSetRepository.validQuantity("order-" + productId, orderCode, decrementQuantity);
+        List<OrderDto> orderDtos = new ArrayList<>();
+        for (OrderRequestDto dto : dtos) {
+            Long productId = dto.productId();
+            ProductResponse productResponse = productClient.getBy(productId, token);
 
-        if (code.equals("3")) {
-            throw new IllegalStateException("재고 수량이 부족합니다.");
+            System.out.println("productId : " + productId);
+            int decrementQuantity = productResponse.quantity();
+            String code = redisSetRepository.validQuantity("order-" + productId, orderCode, decrementQuantity);
+            System.out.println("code : " + code);
+            if (code.equals("3")) {
+                throw new IllegalStateException("재고 수량이 부족합니다.");
+            }
+
+            BigDecimal price = productResponse.price();
+            int quantity = dto.quantity();
+
+            orderDtos.add(new OrderDto(productId, quantity, price));
         }
-
-        BigDecimal price = productResponse.price();
-        BigDecimal totalPrice = price.multiply(BigDecimal.valueOf(quantity));
 
         // 주문서 생성
         Order order = Order.builder()
@@ -149,14 +159,17 @@ public class OrderService {
                 .build();
         Order createOrder = orderRepository.save(order);
 
-        OrderDetail orderDetail = OrderDetail.builder()
-                .ordersId(createOrder.getId())
-                .productId(productId)
-                .quantity(quantity)
-                .price(totalPrice)
-                .status(OrderDetail.OrderStatus.COMPLETE)
-                .build();
-        orderDetailRepository.save(orderDetail);
+        List<OrderDetail> orderDetails = orderDtos.stream()
+                .map(it -> OrderDetail.builder()
+                        .ordersId(createOrder.getId())
+                        .productId(it.productId())
+                        .quantity(it.quantity())
+                        .price(it.price())
+                        .status(OrderDetail.OrderStatus.COMPLETE)
+                        .build())
+                .toList();
+
+        orderDetailRepository.saveAll(orderDetails);
 
         redisZSetRepository.removeBy(PROCESSING_QUEUE_KEY, token);
 
@@ -165,10 +178,12 @@ public class OrderService {
         return orderCode;
     }
 
-    public OrderDto getBy(String orderCode) {
+    public List<OrderDto> getBy(String orderCode) {
         Order order = orderRepository.getBy(orderCode);
-        OrderDetail orderDetail = orderDetailRepository.getBy(order.getId());
+        List<OrderDetail> orderDetails = orderDetailRepository.getAllBy(order.getId());
 
-        return new OrderDto(orderDetail.getProductId(), orderDetail.getQuantity(), orderDetail.getPrice());
+        return orderDetails.stream()
+                .map(it -> new OrderDto(it.getProductId(), it.getQuantity(), it.getPrice()))
+                .toList();
     }
 }

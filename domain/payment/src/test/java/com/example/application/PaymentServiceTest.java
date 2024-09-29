@@ -1,5 +1,6 @@
 package com.example.application;
 
+import com.example.client.FakeApplicationEventPublisher;
 import com.example.client.FakeOrderClient;
 import com.example.client.OrderClient;
 import com.example.model.Payment;
@@ -7,6 +8,7 @@ import com.example.repository.InMemoryPaymentRepository;
 import com.example.repository.PaymentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.math.BigDecimal;
 
@@ -19,6 +21,8 @@ class PaymentServiceTest {
     private PaymentService paymentService;
     private PaymentRepository paymentRepository;
 
+    private ApplicationEventPublisher applicationEventPublisher;
+
     private OrderClient orderClient;
 
     private String orderCode = "20240903213111";
@@ -27,8 +31,9 @@ class PaymentServiceTest {
     @BeforeEach
     void setUp() {
         paymentRepository = new InMemoryPaymentRepository();
+        applicationEventPublisher = new FakeApplicationEventPublisher();
         orderClient = new FakeOrderClient();
-        paymentService = new PaymentService(paymentRepository, orderClient, null);
+        paymentService = new PaymentService(paymentRepository, orderClient, applicationEventPublisher);
     }
 
     @Test

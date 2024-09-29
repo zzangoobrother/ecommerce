@@ -10,6 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -57,10 +60,18 @@ public class ProductService {
 
     @Transactional
     public void decrease(String orderCode) {
-        OrderResponse orderResponse = orderClient.getBy(orderCode);
-        Product product = productRepository.getBy(orderResponse.productId());
-        product.deducted(orderResponse.quantity());
+        List<OrderResponse> orderResponse = orderClient.getBy(orderCode);
+        List<Long> productIds = orderResponse.stream()
+                .map(OrderResponse::productId)
+                .toList();
+        List<Product> products = productRepository.getAllBy(productIds);
 
-        productRepository.save(product);
+        Map<Long, OrderResponse> orderResponseMap = orderResponse.stream()
+                .collect(Collectors.toMap(OrderResponse::productId, Function.identity()));
+        products.forEach(it -> {
+            it.deducted(orderResponseMap.get(it.getId()).quantity());
+        });
+
+        productRepository.saveAll(products);
     }
 }

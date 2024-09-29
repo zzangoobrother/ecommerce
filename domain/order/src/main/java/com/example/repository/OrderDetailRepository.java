@@ -2,8 +2,12 @@ package com.example.repository;
 
 import com.example.model.OrderDetail;
 
+import java.util.List;
+
 public interface OrderDetailRepository {
     OrderDetail save(OrderDetail orderDetail);
 
-    OrderDetail getBy(Long orderId);
+    List<OrderDetail> getAllBy(Long orderId);
+
+    List<OrderDetail> saveAll(List<OrderDetail> orderDetails);
 }

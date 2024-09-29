@@ -44,4 +44,18 @@ public class InmemoryProductRepository implements ProductRepository {
         return products.values().stream()
                 .anyMatch(it -> it.getName().equals(name));
     }
+
+    @Override
+    public List<Product> getAllBy(List<Long> productIds) {
+        return products.values().stream()
+                .filter(it -> productIds.contains(it.getId()))
+                .toList();
+    }
+
+    @Override
+    public List<Product> saveAll(List<Product> products) {
+        return products.stream()
+                .map(this::save)
+                .toList();
+    }
 }

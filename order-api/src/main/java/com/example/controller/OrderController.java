@@ -2,12 +2,15 @@ package com.example.controller;
 
 import com.example.application.OrderService;
 import com.example.application.dto.OrderDto;
+import com.example.application.dto.OrderRequestDto;
 import com.example.controller.dto.request.OrderRequest;
 import com.example.controller.dto.response.OrderResponse;
 import com.example.global.config.auth.AuthMember;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/orders")
 @RestController
@@ -26,12 +29,17 @@ public class OrderController {
 
 //        return orderService.orderByRedisLock(request.productId(), request.quantity(), memberId);
         String token = request.getHeader("queue-token");
-        return orderService.orderByRabbitmq(orderRequest.productId(), orderRequest.quantity(), memberId, token);
+        List<OrderRequestDto> dtos = orderRequest.requests().stream()
+                .map(it -> new OrderRequestDto(it.productId(), it.quantity()))
+                .toList();
+        return orderService.orderByRabbitmq(dtos, memberId, token);
     }
 
     @GetMapping
-    public OrderResponse getBy(@RequestParam String orderCode) {
-        OrderDto orderDto = orderService.getBy(orderCode);
-        return new OrderResponse(orderDto.productId(), orderDto.quantity(), orderDto.price());
+    public List<OrderResponse> getBy(@RequestParam String orderCode) {
+        List<OrderDto> orderDto = orderService.getBy(orderCode);
+        return orderDto.stream()
+                .map(it -> new OrderResponse(it.productId(), it.quantity(), it.price()))
+                .toList();
     }
 }

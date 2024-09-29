@@ -2,10 +2,7 @@ package com.example.repository;
 
 import com.example.model.OrderDetail;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class InMemoryOrderDetailRepository implements OrderDetailRepository {
 
@@ -32,9 +29,16 @@ public class InMemoryOrderDetailRepository implements OrderDetailRepository {
     }
 
     @Override
-    public OrderDetail getBy(Long orderId) {
+    public List<OrderDetail> getAllBy(Long orderId) {
         return orderDetails.values().stream()
-                .filter(it -> it.getOrdersId().equals(orderId))
-                .findFirst().get();
+                .filter(it -> Objects.equals(it.getOrdersId(), orderId))
+                .toList();
+    }
+
+    @Override
+    public List<OrderDetail> saveAll(List<OrderDetail> orderDetails) {
+        return orderDetails.stream()
+                .map(this::save)
+                .toList();
     }
 }

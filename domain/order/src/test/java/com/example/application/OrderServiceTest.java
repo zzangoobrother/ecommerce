@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -20,7 +21,6 @@ class OrderServiceTest {
 
     private OrderRepository orderRepository;
     private OrderDetailRepository orderDetailRepository;
-    private OrderEventRepository orderEventRepository;
 
     private ProductClient productClient;
     private PaymentClient paymentClient;
@@ -32,7 +32,6 @@ class OrderServiceTest {
     void setUp() {
         orderRepository = new InMemoryOrderRepository();
         orderDetailRepository = new InMemoryOrderDetailRepository();
-        orderEventRepository = new InMemoryOrderEventRepository();
 
         productClient = new FakeProductClient();
         paymentClient = new FakePaymentClient();
@@ -53,7 +52,8 @@ class OrderServiceTest {
                 () -> assertThat(order.getOrdersCode()).isEqualTo(orderCode)
         );
 
-        OrderDetail orderDetail = orderDetailRepository.getBy(order.getId());
+        List<OrderDetail> orderDetails = orderDetailRepository.getAllBy(order.getId());
+        OrderDetail orderDetail = orderDetails.get(0);
         assertAll(
                 () -> assertThat(orderDetail.getOrdersId()).isEqualTo(1L),
                 () -> assertThat(orderDetail.getProductId()).isEqualTo(1L),
