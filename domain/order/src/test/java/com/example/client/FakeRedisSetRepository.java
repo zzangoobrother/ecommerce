@@ -22,4 +22,9 @@ public class FakeRedisSetRepository implements RedisSetRepository {
     public String validQuantity(String key, String value, int quantity) {
         return null;
     }
+
+    @Override
+    public String removeLua(String key, String value) {
+        return null;
+    }
 }

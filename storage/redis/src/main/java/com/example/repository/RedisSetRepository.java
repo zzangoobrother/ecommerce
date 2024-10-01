@@ -8,4 +8,6 @@ public interface RedisSetRepository {
     void remove(String key, String value);
 
     String validQuantity(String key, String value, int quantity);
+
+    String removeLua(String key, String value);
 }

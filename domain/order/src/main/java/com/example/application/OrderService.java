@@ -133,45 +133,53 @@ public class OrderService {
     public String orderByRabbitmq(List<OrderRequestDto> dtos, Long memberId, String token) {
         // 상품 재고 확인
         String orderCode = OrderCodeSequence.create(LocalDateTime.now());
-        List<OrderDto> orderDtos = new ArrayList<>();
-        for (OrderRequestDto dto : dtos) {
-            Long productId = dto.productId();
-            ProductResponse productResponse = productClient.getBy(productId, token);
+        try {
+            List<OrderDto> orderDtos = new ArrayList<>();
+            for (OrderRequestDto dto : dtos) {
+                Long productId = dto.productId();
+                ProductResponse productResponse = productClient.getBy(productId, token);
 
-            System.out.println("productId : " + productId);
-            int decrementQuantity = productResponse.quantity();
-            String code = redisSetRepository.validQuantity("order-" + productId, orderCode, decrementQuantity);
-            System.out.println("code : " + code);
-            if (code.equals("3")) {
-                throw new IllegalStateException("재고 수량이 부족합니다.");
+                int decrementQuantity = productResponse.quantity();
+                String code = redisSetRepository.validQuantity("order-" + productId, orderCode, decrementQuantity);
+
+                if (code.equals("3")) {
+                    throw new IllegalStateException("재고 수량이 부족합니다.");
+                }
+
+                BigDecimal price = productResponse.price();
+                int quantity = dto.quantity();
+
+                orderDtos.add(new OrderDto(productId, quantity, price));
             }
 
-            BigDecimal price = productResponse.price();
-            int quantity = dto.quantity();
+            // 주문서 생성
+            Order order = Order.builder()
+                    .memberId(memberId)
+                    .ordersCode(orderCode)
+                    .build();
+            Order createOrder = orderRepository.save(order);
 
-            orderDtos.add(new OrderDto(productId, quantity, price));
+            List<OrderDetail> orderDetails = orderDtos.stream()
+                    .map(it -> OrderDetail.builder()
+                            .ordersId(createOrder.getId())
+                            .productId(it.productId())
+                            .quantity(it.quantity())
+                            .price(it.price())
+                            .status(OrderDetail.OrderStatus.COMPLETE)
+                            .build())
+                    .toList();
+
+            orderDetailRepository.saveAll(orderDetails);
+
+            redisZSetRepository.removeBy(PROCESSING_QUEUE_KEY, token);
+        } catch (RuntimeException e) {
+            for (OrderRequestDto dto : dtos) {
+                Long productId = dto.productId();
+                redisSetRepository.removeLua("order-" + productId, orderCode);
+            }
+
+            throw new RuntimeException(e);
         }
-
-        // 주문서 생성
-        Order order = Order.builder()
-                .memberId(memberId)
-                .ordersCode(orderCode)
-                .build();
-        Order createOrder = orderRepository.save(order);
-
-        List<OrderDetail> orderDetails = orderDtos.stream()
-                .map(it -> OrderDetail.builder()
-                        .ordersId(createOrder.getId())
-                        .productId(it.productId())
-                        .quantity(it.quantity())
-                        .price(it.price())
-                        .status(OrderDetail.OrderStatus.COMPLETE)
-                        .build())
-                .toList();
-
-        orderDetailRepository.saveAll(orderDetails);
-
-        redisZSetRepository.removeBy(PROCESSING_QUEUE_KEY, token);
 
         publisher.publishEvent(new OrderEventDto(orderCode, token));
 

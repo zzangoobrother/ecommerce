@@ -57,4 +57,21 @@ public class RedisSetRepositoryImpl implements RedisSetRepository {
 
         return RedisScript.of(script, String.class);
     }
+
+    @Override
+    public String removeLua(String key, String value) {
+        return redisTemplate.execute(
+                removeScript(),
+                List.of(key),
+                value
+        );
+    }
+
+    private RedisScript<String> removeScript() {
+        String script = """
+                redis.call('SREM', KEYS[1], ARGV[1])
+                """;
+
+        return RedisScript.of(script, String.class);
+    }
 }
