@@ -1,0 +1,19 @@
+tasks.getByName("bootJar") {
+    enabled = false
+}
+
+tasks.getByName("jar") {
+    enabled = true
+}
+
+dependencies {
+    implementation(project(':storage:redis'))
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.4'
+
+    compileOnly 'org.springframework:spring-tx'
+
+    compileOnly("org.springframework:spring-context")
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
