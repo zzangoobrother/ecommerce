@@ -27,6 +27,7 @@ include(
         "storage:payment-db",
         "storage:order-db",
         "storage:queue-db",
+        "storage:coupon-db",
         "storage:redis",
         "support:feign",
         "support:rabbitmq",
